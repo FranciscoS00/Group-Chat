@@ -12,8 +12,13 @@ function UsernameTaken(req, callback){
     User.getUsername(req.body.username, callback);
 }
 
+function UserExists(req, callback){
+    User.checkLogin(req.body.username, req.body.password, callback);
+}
+
 module.exports = {
     addUser,
     getAllUsers,
-    UsernameTaken
+    UsernameTaken,
+    UserExists
 };

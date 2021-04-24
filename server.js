@@ -4,7 +4,8 @@ var mongoConfigs = require('./model/mongoConfigs');
 var url = require('url');
 var ejs = require('ejs');
 var UserController = require('./controllers/UserController');
-const multer = require('multer')
+var alert = require('alert');
+const multer = require('multer');
 
 
 var storage = multer.diskStorage({
@@ -44,10 +45,15 @@ app.get('/login', function(req, res){
     res.render('./login');
 });
 
+app.get('/logged', function(req, res){
+    res.render('./logged');
+});
+
 app.post('/registo/input', upload.single('image'), function(req,res) {
     UserController.UsernameTaken(req, function (result) {
         if (result.length !== 0 ) {
             res.redirect('/registo')
+            alert("O username introduzido já existe, utilize outro!");
         } else {
             UserController.addUser(req, function (err, result) {
                 console.log(result)
@@ -62,9 +68,13 @@ app.post('/registo/input', upload.single('image'), function(req,res) {
 });
 
 app.post('/login', function(req, res){
-    if(!err)
-        res.redirect('/logged');
-    else
-        console.log("Erro!");
-
+    UserController.UserExists(req, function(result){
+        if(result.length !== 0){
+            res.redirect('/logged');
+            /*mandar para a pagina de logged in e guardar a informação de que user se trata*/
+        }else{
+            res.redirect('/login');
+            alert("As credenciais introduzidas não existem, verifique o username e a password");
+        }
+    });
 });

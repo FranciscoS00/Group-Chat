@@ -30,8 +30,21 @@ function getUsername(username, callback){
         callback(result);
     });
 }
+
+function checkLogin(username, password, callback){
+    var db = mongoConfigs.getDB();
+    var filters = { };
+
+    if(username !== undefined) filters.username = username;
+    if(username !== undefined) filters.password = password;
+    db.collection('users').find(filters).toArray(function(err,result){
+        callback(result);
+    });
+}
+
 module.exports = {
     insertUser,
     getAllUsers,
-    getUsername
+    getUsername,
+    checkLogin
 };
