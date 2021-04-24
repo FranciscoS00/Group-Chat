@@ -44,13 +44,20 @@ app.get('/login', function(req, res){
     res.render('./login');
 });
 
-app.post('/registo/input', upload.single('image'), function(req,res){
-    UserController.addUser(req,function(err,result){
-        console.log(result)
-        if(!err)
-            res.redirect('/');
-        else
-            console.log("Erro!");
+app.post('/registo/input', upload.single('image'), function(req,res) {
+    UserController.UsernameTaken(req, function (result) {
+        if (result.length !== 0 ) {
+            res.redirect('/registo')
+        } else {
+            UserController.addUser(req, function (err, result) {
+                console.log(result)
+                if (!err) {
+                    res.redirect('/');
+                } else {
+                    console.log("Erro!");
+                }
+            });
+        }
     });
 });
 

@@ -8,12 +8,12 @@ function getAllUsers(callback, username, password, image){
     User.getAllUsers(callback, username, password, image);
 }
 
-function IsUser(req,callback){
-
+function UsernameTaken(req, callback){
+    User.getUsername(req.body.username, callback);
 }
 
 module.exports = {
     addUser,
     getAllUsers,
-    IsUser
+    UsernameTaken
 };

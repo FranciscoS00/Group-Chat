@@ -21,11 +21,17 @@ function getAllUsers(callback, username, password, image){
     });
 }
 
-function UserExist(req, callback){
+function getUsername(username, callback){
+    var db = mongoConfigs.getDB();
+    var filters = { };
 
+    if(username !== undefined) filters.username = username;
+    db.collection('users').find(filters).toArray(function(err,result){
+        callback(result);
+    });
 }
 module.exports = {
     insertUser,
     getAllUsers,
-    UserExist
+    getUsername
 };
