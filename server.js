@@ -71,7 +71,7 @@ app.post('/login', function(req, res){
     UserController.UserExists(req, function(result){
         if(result.length !== 0){
             res.redirect('/logged');
-            /*mandar para a pagina de logged in e guardar a informação de que user se trata*/
+            /*guardar a informação de que user se trata*/
         }else{
             res.redirect('/login');
             alert("As credenciais introduzidas não existem, verifique o username e a password");
