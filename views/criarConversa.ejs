@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Criar Conversa</title>
+</head>
+<body>
+<%- include(process.cwd() + '/views/partials/socketInicialization') %>
+<h1>Crie uma conversa</h1>
+<textarea id="titulo" placeholder="titulo da conversa"></textarea>
+<textarea id="membros" placeholder="Username das pessoas que queres convidar separado por enters"></textarea>
+<textarea id="regras" placeholder="Breve explicação das regras separado por enters"></textarea>
+<button onclick="var titulo = document.getElementById('titulo');
+    var membros = document.getElementById('membros');
+    var regras = document.getElementById('regras');
+    criarConversa(titulo.value,membros.value,regras.value)">criar</button>
+
+<script>
+    function criarConversa(titulo,membros,regras){
+        var conversa = [titulo,membros,regras,window.location.href];
+        socket.emit('criarConversa',conversa);
+        return
+    }
+</script>
+</body>
+</html>

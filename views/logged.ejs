@@ -4,7 +4,22 @@
     <title>Logged</title>
   </head>
   <body>
+  <%- include(process.cwd() + '/views/partials/socketInicialization') %>
     <h1>Logged</h1>
     <p>Logged</p>
+    <script>
+
+      function emitOption(text)
+      {
+        var url = window.location.href;
+        var envia = [text,url];
+        socket.emit('option',envia);
+        return
+      }
+    </script>
+    <button onclick="emitOption('criar')">Criar conversa</button>
+    <button onclick="emitOption('conversa')">Ver conversa</button>
+    <button onclick="emitOption('pedido')">Ver Pedidos de conversa</button>
+    <button onclick="emitOption('readmitir')">Ver readmições</button>
   </body>
 </html>
