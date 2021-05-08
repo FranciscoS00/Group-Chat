@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <%- include(process.cwd() + '/views/partials/head') %>
     <title>Registo</title>
 </head>
 <body>
-<form method="POST" action="/registo/input" enctype="multipart/form-data">
-    <input type= "text" placeholder="Username" name="username" required><br><br>
-    <input type= "password" placeholder="Password" name="password" required><br><br>
-    <input type="file" name="image">
-    <input type="submit" value="Registar">
-</form>
+    <div class="fix">
+        <form method="POST" action="/registo/input" enctype="multipart/form-data">
+            <input class="registo" type= "text" placeholder="Username" name="username" required><br><br>
+            <input class="registo" type= "password" placeholder="Password" name="password" required><br><br>
+            <input class="registo" type="file" name="image"><br><br>
+            <input class="registo" type="submit" value="Registar">
+        </form>
+    </div>
 </body>
 </html>
