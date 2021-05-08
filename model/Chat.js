@@ -46,7 +46,7 @@ function findID(numero,callback){ //adiciona um lider a um chat
 
     var filters = { };
 
-    if(user !== undefined) filters.id = numero;
+    if(numero !== undefined) filters.id = numero;
 
     db.collection('mensagens').find(filters).toArray(function(err,result){
         callback(result);
