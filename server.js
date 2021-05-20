@@ -8,6 +8,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 var multer  = require('multer')
 var upload = multer({ dest: 'uploads/' })
+var alert = require('alert')
+var UserController = require('./controllers/UserController')
 
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 const ensureLoggedOut = require('connect-ensure-login').ensureLoggedOut;
@@ -102,25 +104,34 @@ app.post(
 app.post("/register", upload.single('imagemPerfil') ,function(req,res){
 
     //New User in the DB
-    if(req.file===undefined){
-        const instance = new User({ username: req.body.username, password: req.body.password, imagem: null, });
-        instance.save(function (err, instance) {
-            if (err) return console.error(err);
+    UserController.UsernameTaken(db, req, function(result) {
+        if(result.length !==0) {
+            res.redirect('register')
+            alert("O username introduzido já está em uso!");
+        }else {
+            if (req.file === undefined) {
+                const instance = new User({username: req.body.username, password: req.body.password, imagem: null,});
+                instance.save(function (err, instance) {
+                    if (err) return console.error(err);
 
-            //Let's redirect to the login post which has auth
-            res.redirect(307, '/login');
-        });
-    }
-    else{
-        const instance = new User({ username: req.body.username, password: req.body.password, imagem: req.file.filename, });
-        instance.save(function (err, instance) {
-            if (err) return console.error(err);
+                    //Let's redirect to the login post which has auth
+                    res.redirect(307, '/login');
+                });
+            } else {
+                const instance = new User({
+                    username: req.body.username,
+                    password: req.body.password,
+                    imagem: req.file.filename,
+                });
+                instance.save(function (err, instance) {
+                    if (err) return console.error(err);
 
-            //Let's redirect to the login post which has auth
-            res.redirect(307, '/login');
-        });
-    }
-
+                    //Let's redirect to the login post which has auth
+                    res.redirect(307, '/login');
+                });
+            }
+        }
+    })
 });
 
 app.post("/logout", (req, res) => {
