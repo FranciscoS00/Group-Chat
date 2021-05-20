@@ -6,6 +6,8 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+var multer  = require('multer')
+var upload = multer({ dest: 'uploads/' })
 
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 const ensureLoggedOut = require('connect-ensure-login').ensureLoggedOut;
@@ -29,7 +31,11 @@ db.once('open', function() {
 //Set the schema
 const userSchema = new mongoose.Schema({
     username: String,
-    password: String
+    password: String,
+    imagem: {
+        data: Buffer,
+        contentType: String
+    }
 });
 
 const chatSchema = new mongoose.Schema({
@@ -95,10 +101,10 @@ app.post(
     })
 );
 
-app.post("/register",function(req,res){
+app.post("/register", upload.single('imagemPerfil') ,function(req,res){
 
     //New User in the DB
-    const instance = new User({ username: req.body.username, password: req.body.password });
+    const instance = new User({ username: req.body.username, password: req.body.password, imagem: req.file, });
     instance.save(function (err, instance) {
         if (err) return console.error(err);
 
