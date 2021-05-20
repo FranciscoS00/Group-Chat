@@ -32,10 +32,7 @@ db.once('open', function() {
 const userSchema = new mongoose.Schema({
     username: String,
     password: String,
-    imagem: {
-        data: Buffer,
-        contentType: String
-    }
+    imagem: String
 });
 
 const chatSchema = new mongoose.Schema({
@@ -49,7 +46,8 @@ const chatSchema = new mongoose.Schema({
 const msgSchema = new mongoose.Schema({
     username: String,
     conteudo: String,
-    data: Date
+    data: Date,
+    id: Number
 });
 
 //Set the behaviour
@@ -104,13 +102,24 @@ app.post(
 app.post("/register", upload.single('imagemPerfil') ,function(req,res){
 
     //New User in the DB
-    const instance = new User({ username: req.body.username, password: req.body.password, imagem: req.file, });
-    instance.save(function (err, instance) {
-        if (err) return console.error(err);
+    if(req.file===undefined){
+        const instance = new User({ username: req.body.username, password: req.body.password, imagem: null, });
+        instance.save(function (err, instance) {
+            if (err) return console.error(err);
 
-        //Let's redirect to the login post which has auth
-        res.redirect(307, '/login');
-    });
+            //Let's redirect to the login post which has auth
+            res.redirect(307, '/login');
+        });
+    }
+    else{
+        const instance = new User({ username: req.body.username, password: req.body.password, imagem: req.file.filename, });
+        instance.save(function (err, instance) {
+            if (err) return console.error(err);
+
+            //Let's redirect to the login post which has auth
+            res.redirect(307, '/login');
+        });
+    }
 
 });
 
