@@ -1,80 +1,181 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var mongoConfigs = require('./model/mongoConfigs');
-var url = require('url');
-var ejs = require('ejs');
-var UserController = require('./controllers/UserController');
-var alert = require('alert');
-const multer = require('multer');
+const app = require("express")();
+const server = require("http").createServer(app);
+const port = process.env.PORT || 3000;
+
+const session = require("express-session");
+const bodyParser = require("body-parser");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+
+const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
+const ensureLoggedOut = require('connect-ensure-login').ensureLoggedOut;
+
+const sessionMiddleware = session({ secret: "changeit", resave: false, saveUninitialized: false });
+app.use(sessionMiddleware);
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+const mongoose = require('mongoose');
+mongoose.connect('mongodb+srv://G11:VpJZUb2O9NtUV7Va@clusterdbw.1dbjr.mongodb.net/G11?authSource=admin&replicaSet=atlas-bek8xj-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true', {useNewUrlParser: true, useUnifiedTopology: true});
 
 
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads')
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now())
-    }
-})
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+    console.log('Connected!');
+});
 
-var upload = multer({ storage: storage })
+//Set the schema
+const userSchema = new mongoose.Schema({
+    username: String,
+    password: String
+});
 
-var urlencodedParser = bodyParser.urlencoded({extended:false});
-var app = express();
+const chatSchema = new mongoose.Schema({
+    criador: String,
+    password: String,
+    participantes: String,
+    data: Date,
+    nome: String
+});
 
-app.use(urlencodedParser);
-app.set('view engine', 'ejs');
+const msgSchema = new mongoose.Schema({
+    username: String,
+    conteudo: String,
+    data: Date
+});
 
-mongoConfigs.connect(function(err){
-    if(!err){
-        app.listen(3000,function(){
-            console.log("Express web server listening on port 3000");
+//Set the behaviour
+userSchema.methods.verifyPassword = function (password) {
+    return password === this.password;
+}
+
+//Compile the schema into a model
+const User = mongoose.model('User', userSchema);
+const Chat = mongoose.model('Chat', chatSchema);
+const Msg = mongoose.model('Msg', msgSchema);
+
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+        User.findOne({ username: username }, function (err, user) {
+            if (err) { return done(err); }
+            if (!user) { return done(null, false); }
+            if (!user.verifyPassword(password)) { return done(null, false); }
+            return done(null, user);
         });
     }
+));
+
+app.get("/", (req, res) => {
+    const isAuthenticated = !!req.user;
+    if (isAuthenticated) {
+        console.log(`user is authenticated, session is ${req.session.id}`);
+    } else {
+        console.log("unknown user");
+    }
+    res.render(isAuthenticated ? "index.ejs" : "login.ejs");
 });
 
-app.get('/', function(req, res){
-    res.render('./index');
+app.get("/chatroom", ensureLoggedIn('/'), (req,res) => {
+
+    res.render('chatroom.ejs');
+
 });
 
-app.get('/registo', function(req, res){
-    res.render('./registo');
+app.get("/register", ensureLoggedOut('/'), (req, res) => {
+    res.render("registo.ejs");
 });
 
-app.get('/login', function(req, res){
-    res.render('./login');
+app.post(
+    "/login",
+    passport.authenticate("local", {
+        successRedirect: "/",
+        failureRedirect: "/",
+    })
+);
+
+app.post("/register",function(req,res){
+
+    //New User in the DB
+    const instance = new User({ username: req.body.username, password: req.body.password });
+    instance.save(function (err, instance) {
+        if (err) return console.error(err);
+
+        //Let's redirect to the login post which has auth
+        res.redirect(307, '/login');
+    });
+
 });
 
-app.get('/logged', function(req, res){
-    res.render('./logged');
+app.post("/logout", (req, res) => {
+    console.log(`logout ${req.session.id}`);
+    const socketId = req.session.socketId;
+    if (socketId && io.of("/").sockets.get(socketId)) {
+        console.log(`forcefully closing socket ${socketId}`);
+        io.of("/").sockets.get(socketId).disconnect(true);
+    }
+    req.logout();
+    res.cookie("connect.sid", "", { expires: new Date() });
+    res.redirect("/");
 });
 
-app.post('/registo/input', upload.single('image'), function(req,res) {
-    UserController.UsernameTaken(req, function (result) {
-        if (result.length !== 0 ) {
-            res.redirect('/registo')
-            alert("O username introduzido já existe, utilize outro!");
-        } else {
-            UserController.addUser(req, function (err, result) {
-                console.log(result)
-                if (!err) {
-                    res.redirect('/');
-                } else {
-                    console.log("Erro!");
-                }
-            });
-        }
+passport.serializeUser((user, cb) => {
+    console.log(`serializeUser ${user.id}`);
+    cb(null, user.id);
+});
+
+passport.deserializeUser((id, cb) => {
+    console.log(`deserializeUser ${id}`);
+    User.findById(id, function (err, user) {
+        if (err) { return cb(err); }
+        cb(null, user);
     });
 });
 
-app.post('/login', function(req, res){
-    UserController.UserExists(req, function(result){
-        if(result.length !== 0){
-            res.redirect('/logged');
-            /*guardar a informação de que user se trata*/
-        }else{
-            res.redirect('/login');
-            alert("As credenciais introduzidas não existem, verifique o username e a password");
-        }
+const io = require('socket.io')(server);
+
+// convert a connect middleware to a Socket.IO middleware
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+
+io.use(wrap(sessionMiddleware));
+io.use(wrap(passport.initialize()));
+io.use(wrap(passport.session()));
+
+io.use((socket, next) => {
+    if (socket.request.user) {
+        next();
+    } else {
+        next(new Error('unauthorized'))
+    }
+});
+
+io.on('connect', (socket) => {
+    console.log(`new connection ${socket.id}`);
+    socket.on('whoami', (cb) => {
+        cb(socket.request.user.username);
     });
+
+    const session = socket.request.session;
+    console.log(`saving sid ${socket.id} in session ${session.id}`);
+    session.socketId = socket.id;
+    session.save();
+
+    //Chat
+    socket.on("join", function(){
+        console.log(socket.request.user.username+" joined server");
+        io.emit("update", socket.request.user.username + " has joined the server.");
+    });
+
+
+    socket.on('chat message',function(msg){
+        console.log('message: '+msg);
+        var mensagem = {msg:msg, id:socket.request.user.username};
+        io.emit('chat message', mensagem);
+    })
+
+});
+
+server.listen(port, () => {
+    console.log(`application is running at: http://localhost:${port}`);
 });
