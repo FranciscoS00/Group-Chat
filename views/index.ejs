@@ -6,7 +6,6 @@
     </head>
     <body>
         <p>Authenticated!</p>
-        <p>Socket ID: <span id="socketId"></span></p>
         <p>Username: <span id="username"></span></p>
         <form action="/logout" method="post">
             <div>
@@ -14,16 +13,17 @@
             </div>
         </form>
 
-        <a href="/chatroom" >Go to Chatroom</a>
+        <a href="/criarChat" >Create a chatroom</a><br>
+        <a href="/chatroom" >Go to Chatroom</a><br>
+        <a href="/pedidos" >Enter in a chat</a><br>
+        <a href="/readmitir" >Reenter in a chat that you quit</a>
 
         <script src="/socket.io/socket.io.js"></script>
         <script>
           const socket = io();
-          const socketIdSpan = document.getElementById("socketId");
           const usernameSpan = document.getElementById("username");
 
           socket.on('connect', () => {
-            socketIdSpan.innerText = socket.id;
 
             socket.emit('whoami', (username) => {
               usernameSpan.innerText = username;

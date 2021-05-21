@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Passport example</title>
+</head>
+<body>
+<p>Create your chatroom <span id="username"></span></p>
+
+<form action="/criarChat" method="post">
+    <input type="text" name="username" id="usernameID" hidden>
+    <div>
+        <label>Chat Name:</label>
+        <input type="text" name="chatname" required>
+        <br/>
+    </div>
+    <div id="elementos do chat">
+        <label>Number of diferent usernames that will take part of the chatroom:</label>
+        <input type="number" name="numeroElementos" id="numeroElementos" class="numeroElementos" required>
+    </div>
+    <div id="regras do chat">
+        <label>Number of diferent rules of the chatroom:</label>
+        <input type="number" name="numeroRegras" id="numeroRegras" class="numeroRegras" required>
+    </div>
+    <div>
+        <input type="submit" value="Submit">
+    </div>
+</form>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const usernameSpan = document.getElementById("username");
+
+    socket.on('connect', () => {
+
+        socket.emit('whoami', (username) => {
+            usernameSpan.innerText = username;
+            document.getElementById("usernameID").setAttribute("value",username);
+
+        });
+    });
+</script>
+
+
+<script>
+    document.getElementById("numeroElementos").addEventListener('change', updateValue);
+    document.getElementById("numeroRegras").addEventListener('change', updateValueRegras);
+
+    Element.prototype.remove = function() {
+        this.parentElement.removeChild(this);
+    }
+    NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
+        for(var i = this.length - 1; i >= 0; i--) {
+            if(this[i] && this[i].parentElement) {
+                this[i].parentElement.removeChild(this[i]);
+            }
+        }
+    }
+
+    function updateValue (e) {
+        document.getElementsByClassName("elementosChat").remove();
+        for(var i=0;i<e.target.value;i++){
+            var br = document.createElement('br');
+            br.setAttribute("class","elementosChat");
+            document.getElementById("elementos do chat").appendChild(br);
+            var membrosChat = document.createElement("input");
+            membrosChat.setAttribute("type","text");
+            membrosChat.setAttribute("name","elementosChat");
+            membrosChat.setAttribute("class","elementosChat");
+            membrosChat.setAttribute("placeholder","Username");
+            membrosChat.setAttribute("required","True");
+            document.getElementById("elementos do chat").appendChild(membrosChat);
+        }
+    }
+
+    function updateValueRegras (e) {
+        document.getElementsByClassName("regras").remove();
+        for(var i=0;i<e.target.value;i++){
+            var br = document.createElement('br');
+            br.setAttribute("class","regras");
+            document.getElementById("regras do chat").appendChild(br);
+            var regrasChat = document.createElement("input");
+            regrasChat.setAttribute("type","text");
+            regrasChat.setAttribute("name","regras");
+            regrasChat.setAttribute("class","regras");
+            regrasChat.setAttribute("placeholder","Regra");
+            regrasChat.setAttribute("required","True");
+            document.getElementById("regras do chat").appendChild(regrasChat);
+        }
+    }
+</script>
+</body>
+</html>

@@ -10,6 +10,7 @@ var multer  = require('multer')
 var upload = multer({ dest: 'uploads/' })
 var alert = require('alert')
 var UserController = require('./controllers/UserController')
+var ChatController = require('./controllers/ChatController')
 
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 const ensureLoggedOut = require('connect-ensure-login').ensureLoggedOut;
@@ -39,8 +40,8 @@ const userSchema = new mongoose.Schema({
 
 const chatSchema = new mongoose.Schema({
     criador: String,
-    password: String,
-    participantes: String,
+    regra: Array,
+    participante: Array,
     data: Date,
     nome: String
 });
@@ -91,6 +92,11 @@ app.get("/chatroom", ensureLoggedIn('/'), (req,res) => {
 
 app.get("/register", ensureLoggedOut('/'), (req, res) => {
     res.render("registo.ejs");
+});
+
+app.get("/criarChat", ensureLoggedIn('/'), (req, res) => {
+
+    res.render("criarChat.ejs");
 });
 
 app.post(
@@ -144,6 +150,42 @@ app.post("/logout", (req, res) => {
     req.logout();
     res.cookie("connect.sid", "", { expires: new Date() });
     res.redirect("/");
+});
+
+app.post("/criarChat", function(req, res) {
+    ChatController.ChatTaken(db,req,function (result){
+        if(result.length!==0) {
+            res.redirect('/criarChat');
+            alert("Esse nome de chat já existe");
+        }
+        else{
+            var date = new Date();
+            var chatDB = '{ "nome":"' + req.body.chatname + '", "data":"' + date + '", "criador":"' + req.body.username + '", "participante":[ "';
+
+            for(var i=0;i<req.body.numeroElementos;i++){
+                chatDB = chatDB + req.body.elementosChat[i];
+                if(i+1<req.body.numeroElementos)
+                    chatDB = chatDB + '", "';
+            }
+            chatDB = chatDB + '" ], "regra":[ "';
+
+            for(var i=0;i<req.body.numeroRegras;i++){
+                chatDB = chatDB + req.body.regras[i];
+                if(i+1<req.body.numeroRegras)
+                    chatDB = chatDB + '", "';
+            }
+            chatDB = chatDB + '" ]}';
+            console.log(chatDB.substring(153,185));
+            const instance = new Chat(JSON.parse(chatDB));
+            instance.save(function (err, instance) {
+                if (err) return console.error(err);
+
+                //Let's redirect to the login post which has auth
+                res.redirect(307, '/login');
+            });
+        }
+    });
+
 });
 
 passport.serializeUser((user, cb) => {
