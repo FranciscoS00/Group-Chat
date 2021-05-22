@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Passport example</title>
+</head>
+<body>
+<p>Authenticated!</p>
+<p>Username: <span id="username"></span></p>
+<form action="/pedidos" method="post">
+    <input type="text" name="username" id="usernameID" hidden>
+    <div id="escolherChat"></div>
+    <div id="aceitar ou rejeitar"></div>
+</form>
+
+
+<script>
+    function chatsToCheckbox(chats){
+        if(chats.length!==0){
+            for(var i=0;i<chats.length;i++){
+                var chatPendente = document.createElement("p");
+                chatPendente.setAttribute("id",i);
+                chatPendente.innerText = chats[i].nome;
+                document.getElementById("escolherChat").appendChild(chatPendente);
+                var chatPendente = document.createElement("input");
+                chatPendente.setAttribute("name","chatsPendentes");
+                chatPendente.setAttribute("value",chats[i].nome);
+                chatPendente.setAttribute("type","checkbox");
+                document.getElementById(i).appendChild(chatPendente);
+            }
+            var chatPendente = document.createElement("input");
+            chatPendente.setAttribute("name","resposta");
+            chatPendente.setAttribute("value","aceitar");
+            chatPendente.setAttribute("type","submit");
+            document.getElementById("aceitar ou rejeitar").appendChild(chatPendente);
+            var chatPendente = document.createElement("input");
+            chatPendente.setAttribute("name","resposta");
+            chatPendente.setAttribute("value","rejeitar");
+            chatPendente.setAttribute("type","submit");
+            document.getElementById("aceitar ou rejeitar").appendChild(chatPendente);
+        }
+        else{
+            var chatPendente = document.createElement("p");
+            chatPendente.innerText = "Não tem nenhum chat pendente";
+            document.getElementById("escolherChat").appendChild(chatPendente);
+        }
+    }
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const usernameSpan = document.getElementById("username");
+
+    socket.on('connect', () => {
+
+        socket.emit('whoami', (username) => {
+            usernameSpan.innerText = username;
+            document.getElementById("usernameID").setAttribute("value",username);
+        });
+
+        socket.emit('pendentes', (chats) => {
+            chatsToCheckbox(chats);
+        });
+    });
+</script>
+</body>
+</html>

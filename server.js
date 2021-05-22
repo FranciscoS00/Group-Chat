@@ -53,6 +53,17 @@ const msgSchema = new mongoose.Schema({
     id: Number
 });
 
+const pendSchema = new mongoose.Schema({
+    username: String,
+    nome: String
+})
+
+const membroSchema = new mongoose.Schema({
+    username: String,
+    nome: String,
+    criador: String
+})
+
 //Set the behaviour
 userSchema.methods.verifyPassword = function (password) {
     return password === this.password;
@@ -62,17 +73,17 @@ userSchema.methods.verifyPassword = function (password) {
 const User = mongoose.model('User', userSchema);
 const Chat = mongoose.model('Chat', chatSchema);
 const Msg = mongoose.model('Msg', msgSchema);
+const Pendente = mongoose.model('pendente',pendSchema);
+const MembroChat = mongoose.model('membroChat',membroSchema);
 
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-        User.findOne({ username: username }, function (err, user) {
-            if (err) { return done(err); }
-            if (!user) { return done(null, false); }
-            if (!user.verifyPassword(password)) { return done(null, false); }
-            return done(null, user);
-        });
-    }
-));
+passport.use(new LocalStrategy(function(username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
+        if (err) { return done(err); }
+        if (!user) { return done(null, false); }
+        if (!user.verifyPassword(password)) { return done(null, false); }
+        return done(null, user);
+    });
+}));
 
 app.get("/", (req, res) => {
     const isAuthenticated = !!req.user;
@@ -99,9 +110,11 @@ app.get("/criarChat", ensureLoggedIn('/'), (req, res) => {
     res.render("criarChat.ejs");
 });
 
-app.post(
-    "/login",
-    passport.authenticate("local", {
+app.get("/pedidos", ensureLoggedIn('/'), (req,res) => {
+    res.render("pedidos.ejs");
+})
+
+app.post("/login",passport.authenticate("local", {
         successRedirect: "/",
         failureRedirect: "/",
     })
@@ -162,17 +175,25 @@ app.post("/criarChat", function(req, res) {
             var date = new Date();
             var chatDB = '{ "nome":"' + req.body.chatname + '", "data":"' + date + '", "criador":"' + req.body.username + '", "participante":[ "';
 
-            for(var i=0;i<req.body.numeroElementos;i++){
-                chatDB = chatDB + req.body.elementosChat[i];
-                if(i+1<req.body.numeroElementos)
-                    chatDB = chatDB + '", "';
+            for(var i=0;i<req.body.numeroElementos;i++) {
+                if(req.body.numeroElementos==1)
+                    chatDB = chatDB + req.body.elementosChat;
+                else{
+                    chatDB = chatDB + req.body.elementosChat[i];
+                    if (i + 1 < req.body.numeroElementos)
+                        chatDB = chatDB + '", "';
+                }
             }
             chatDB = chatDB + '" ], "regra":[ "';
 
             for(var i=0;i<req.body.numeroRegras;i++){
-                chatDB = chatDB + req.body.regras[i];
-                if(i+1<req.body.numeroRegras)
-                    chatDB = chatDB + '", "';
+                if(req.body.numeroRegras==1)
+                    chatDB = chatDB + req.body.regras;
+                else{
+                    chatDB = chatDB + req.body.regras[i];
+                    if(i+1<req.body.numeroRegras)
+                        chatDB = chatDB + '", "';
+                }
             }
             chatDB = chatDB + '" ]}';
             console.log(chatDB.substring(153,185));
@@ -180,6 +201,30 @@ app.post("/criarChat", function(req, res) {
             instance.save(function (err, instance) {
                 if (err) return console.error(err);
 
+                for(i=0;i<req.body.numeroElementos;i++){
+                    if (req.body.numeroElementos==1)
+                        var saveDB = new Pendente({
+                            username: req.body.elementosChat,
+                            nome: req.body.chatname,
+                        })
+                    else
+                        var saveDB = new Pendente({
+                            username: req.body.elementosChat[i],
+                            nome: req.body.chatname,
+                        })
+                    saveDB.save(function(err,saveDB){
+                        if (err) return console.error(err);
+                    })
+                }
+
+                var saveDB = new MembroChat({
+                    username: req.body.username,
+                    nome: req.body.chatname,
+                    criador: req.body.username,
+                })
+                saveDB.save(function(err,saveDB){
+                    if (err) return console.error(err);
+                })
                 //Let's redirect to the login post which has auth
                 res.redirect(307, '/login');
             });
@@ -187,6 +232,17 @@ app.post("/criarChat", function(req, res) {
     });
 
 });
+
+app.post("/pedidos", function (req,res){
+    if(req.body.resposta === "aceitar"){
+        ChatController.Aceitar(db,req);
+        res.redirect(307, '/login');
+    }
+    else{
+        ChatController.Rejeitar(db,req);
+        res.redirect(307, '/login');
+    }
+})
 
 passport.serializeUser((user, cb) => {
     console.log(`serializeUser ${user.id}`);
@@ -222,6 +278,12 @@ io.on('connect', (socket) => {
     console.log(`new connection ${socket.id}`);
     socket.on('whoami', (cb) => {
         cb(socket.request.user.username);
+    });
+
+    socket.on('pendentes', (cb) => {
+        ChatController.Pendentes(db,socket,function (result){
+            cb(result);
+        })
     });
 
     const session = socket.request.session;
