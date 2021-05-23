@@ -1,0 +1,352 @@
+<style>
+    /*index*/
+
+    .main{
+        font-size: 35px;
+        display: flex;
+        background: #a3a3a3;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+    }
+
+    .top{
+        display: block;
+    }
+    .logout{
+        margin-top: 150px;
+    }
+    .form1{
+        margin-left: 42%;
+        display: flex;
+        justify-items: center;
+    }
+    .form2{
+        background: #a3a3a3;
+        margin-top: 40px;
+        display: block;
+    }
+    .form2 a{
+        justify-items: center;
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+    }
+
+    /* When you mouse over the navigation links, change their color */
+    .form2 a:hover {
+        color: #f1f1f1;
+        background-color: #343434;
+    }
+
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+    /*chat*/
+    *, *:before, *:after {
+        box-sizing: inherit;
+    }
+
+    html {
+        box-sizing: border-box;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .topbar {
+
+        height: 25px;
+        background: #181818; /* 15317E*/
+        color: #fff;
+        font-size: 10px;
+        padding: 0 8px;
+
+
+    }
+    .topbar button{
+        background-color: #181818;
+        color: white;
+        padding: 2px 2px 2px 2px;
+        float: right;
+        border-radius: 50%;
+    }
+    .userbar {
+        height: 55px;
+        background: #343434; /* 2554C7*/
+        color: #fff;
+        padding: 2px 2px 2px 2px;
+        font-size: 24px;
+        position: relative;
+        align-items: center;
+    }
+
+    .userbar button{
+        background-color: #343434 ;
+        color: white;
+        padding: 3px;
+        margin: 5px;
+
+    }
+    .userbar .left{
+        align-items: center;
+        display: flex;
+        float: left;
+    }
+
+    .userbar .left .profpic {
+        margin: 5px 0 0 5px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .userbar .left .profpic img {
+        border-radius: 50%;
+        width: 100%;
+    }
+
+    .userbar .left .name {
+        display: block;
+        color: white;
+        font-size: 20px;
+        font-weight: 600;
+        text-overflow: ellipsis;
+        margin: 7px 0 0 8px;
+        overflow: hidden;
+        width: 110px;
+
+    }
+    .userbar .left .name .status {
+        font-size: 14px;
+    }
+
+    .userbar .left .groupname{
+        align-items: center;
+        margin-right: 20px;
+    }
+
+    .userbar .right{
+        align-items: center;
+        float: right;
+    }
+
+    .chat-container{
+        position: relative;
+        min-height: 880px;
+        height:100%;
+        background: #a3a3a3 url("https://i.pinimg.com/originals/19/fc/21/19fc21dc1f8a339ea8f302c75320a28f.jpg");
+        background-size: cover ;
+        z-index: 0;
+
+        /*https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCGcQ529gyEgYfV7uYj9wTazbkmZ4RYsv0Qw&usqp=CAU */
+    }
+
+    .chat-container .chat{
+
+    }
+
+    .chat-container .message-drawer{
+
+    }
+
+    .chat-container .message-drawer .input-msg {
+        border: 0;
+        flex: 1 1 auto;
+        font-size: 16px;
+        margin: 0;
+        outline: none;
+        min-width: 50px;
+    }
+
+
+
+
+
+    /* Parte para enviar a mensagem */
+
+    .message-drawer {
+        position: fixed;
+        bottom: 15px;
+        justify-content: end;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        overflow: hidden;
+        height: 50px;
+        width: 98%;
+        z-index: 2;
+    }
+
+    .message-drawer div,
+    .message-drawer input {
+        background: #fff;
+        height: 100%;
+    }
+
+    .message-drawer .emoji {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 5px 0 0 5px;
+        flex: 0 0 auto;
+        margin-left: 8px;
+        width: 48px;
+    }
+
+    .message-drawer .input-msg {
+        border: 0;
+        flex: 1 1 auto;
+        font-size: 16px;
+        margin: 0;
+        outline: none;
+        min-width: 50px;
+    }
+
+    .message-drawer .photo {
+        flex: 0 0 auto;
+        border-radius: 0 0 5px 0;
+        text-align: center;
+        position: relative;
+        width: 48px;
+    }
+
+    .message-drawer .photo:after { /* para fazer o "triangulo"*/
+        border-width: 0px 0 10px 10px;
+        border-color: transparent transparent transparent #fff;
+        border-style: solid;
+        position: absolute;
+        width: 0;
+        height: 0;
+        content: "";
+        top: 0;
+        right: -10px;
+    }
+
+    .message-drawer .photo i {
+        display: block;
+        color: #7d8488;
+        font-size: 24px;
+        transform: translate(-50%, -50%);
+        position: relative;
+        top: 50%;
+        left: 50%;
+    }
+
+    .message-drawer .send {
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        flex: 0 0 auto;
+        margin-left: 8px;
+        margin-right: 8px;
+        padding: 0;
+        position: relative;
+        outline: none;
+    }
+
+    .message-drawer .send .circle {
+        background: #181818; /* 2554C7*/
+        border-radius: 50%;
+        color: #fff;
+        position: relative;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .message-drawer .send .circle i {
+        font-size: 24px;
+        margin-left: 5px;
+    }
+
+
+    /* Messages */
+
+    .message {
+        color: #000;
+        clear: both;
+        line-height: 18px;
+        font-size: 15px;
+        padding: 8px;
+        position: relative;
+        margin: 8px 0;
+        max-width: 85%;
+        word-wrap: break-word;
+        z-index: -1;
+    }
+
+    .message:after {
+        position: absolute;
+        content: "";
+        width: 0;
+        height: 0;
+        border-style: solid;
+    }
+
+
+
+    .message:first-child {
+        margin: 16px 0 8px;
+    }
+
+    .message.received {
+        margin-left: 10px;
+        background: white;
+        border-radius: 0px 5px 5px 5px;
+        float: left;
+    }
+
+
+    .message.received:after {
+        border-width: 0px 10px 10px 0;
+        border-color: transparent #fff;
+        top: 0;
+        left: -10px;
+    }
+
+    .message.sent {
+        margin-right: 10px;
+        background: #B3B3B3 ; /* 4EE2EC*/
+        border-radius: 5px 0px 5px 5px;
+        float: right;
+
+    }
+
+    .message.sent:after {
+        border-width: 0px 0 10px 10px;
+        border-color: transparent #B3B3B3;/* 4EE2EC*/
+        top: 0;
+        right: -10px;
+    }
+
+
+</style>

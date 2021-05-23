@@ -2,104 +2,144 @@
 <html>
 <head>
     <title>Socket.IO chat</title>
-    <style>
 
-        body {
-            font: 13px Helvetica, Arial;
-        }
-
-        #login{
-            width:100vw;
-            height: 100vh;
-        }
-
-        #chat{
-            overflow:auto;
-        }
-
-        #login_form{
-            border:1px solid red;
-            left:50%;
-            top:50%;
-            margin:0 auto;
-        }
-
-        #message_form {
-            background-color:rgb(216, 170, 118); padding: 8px 8px 8px 8px ;
-        }
-
-        #messages {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            height: 85vh;
-        }
-
-        #messages li {
-            padding: 5px 10px;
-        }
-
-    </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
+    <script src="server.js"></script>
+    <%- include('./partials/head') %>
 
-        function intToRGB(i) {
-            var c = (i & 0x00FFFFFF)
-                .toString(16)
-                .toUpperCase();
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons"
+          rel="stylesheet">
 
-            return "00000".substring(0, 6 - c.length) + c;
-        }
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"
+          rel="stylesheet">
 
-        function hashCode(str) { // java String#hashCode
-            var hash = 0;
-            for (var i = 0; i < str.length; i++) {
-                hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            var result = intToRGB(hash);
-            console.log(result);
-            return result;
-        }
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Round"
+          rel="stylesheet">
 
-        $(document).ready(function () {
 
-            var socket = io();
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Sharp"
+          rel="stylesheet">
 
-            //We don't need to pass the name, it will be obtained from the session
-            socket.emit("join");
 
-            $('form').submit(function () {
-                socket.emit('chat message', $('#m').val());
-                console.log($('#m').val());
-                $('#m').val('');
-                return false;
-            });
-            socket.on('chat message', function (msg) {
-                $('#messages').append('<li style=background-color:#' + hashCode(msg.id) + '>' + (msg.id + ":" + msg.msg) + '</li>');
-                window.scrollTo(0,document.body.scrollHeight);
-            });
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Two+Tone"
+          rel="stylesheet">
 
-            socket.on('update',function(msg){
-                $('#messages').append('<li style="background-color:#000000;color:#FFFFFF">' + (msg) + '</li>');
-                window.scrollTo(0,document.body.scrollHeight);
-            });
-        });
-    </script>
+
 </head>
-
 <body>
+<div class="page">
+    <div class="topbar">
+        <button><i class="material-icons">cancel</i></button>
+    </div>
+    <div class="userbar">
+        <div class="left">
+            <button><i class="material-icons">menu</i></button>
+            <div class="groupname"><span id="groupname">Groupname</span></div>
+            <div class="profpic"><img src="http://www.codeproject.com/KB/GDI-plus/ImageProcessing2/img.jpg"> </div>
+            <div class="name"><span id="username"></span></div>
+            <button><i class="material-icons">mode</i></button>
+        </div>
+        <div class="right"> <button><i class="material-icons">groups</i></button><button><i class="material-icons">notifications</i></button></div>
 
-<div id="chat">
-    <ul id="messages"></ul>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat" id="messages">
+
+
+            <script>
+
+                function intToRGB(i) {
+                    var c = (i & 0x00FFFFFF)
+                        .toString(16)
+                        .toUpperCase();
+
+                    return "00000".substring(0, 6 - c.length) + c;
+                }
+
+                function hashCode(str) { // java String#hashCode
+                    var hash = 0;
+                    for (var i = 0; i < str.length; i++) {
+                        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+                    }
+                    var result = intToRGB(hash);
+                    console.log(result);
+                    return result;
+                }
+
+                $(document).ready(function () {
+
+                    var socket = io();
+
+                    //We don't need to pass the name, it will be obtained from the session
+                    socket.emit("join");
+
+                    $('form').submit(function () {
+                        socket.emit('chat message', $('#m').val());
+                        console.log($('#m').val());
+                        $('#m').val('');
+                        return false;
+                    });
+                    socket.on('chat message', function (msg) {
+                        $('#messages').append('<div class="message sent">' +  ' ' + (msg.id + ":" + msg.msg) + '</div>');
+                        window.scrollTo(0,document.body.scrollHeight);
+                    });
+
+                    socket.on('update',function(msg){
+                        $('#messages').append('<div class="message received">' + (msg) + '</div>');
+                        window.scrollTo(0,document.body.scrollHeight);
+                    });
+                });
+
+            </script>
+        </div>
+        <form class="message-drawer">
+            <div class="emoji">
+                <i class="material-icons">mood</i>
+            </div>
+
+            <input class="input-msg" name="form" placeholder="Send a message" autocomplete="off" autofocus id="m"></input>
+
+            <div class="photo">
+                <i class="material-icons">image</i>
+            </div>
+
+            <button class="send">
+                <div class="circle">
+                    <i class="material-icons">send</i>
+                </div>
+            </button>
+        </form>
+    </div>
+
+
+
+
+
+
 </div>
-<hr>
-<form id="message_form" action="">
-    <input style="width:90%" id="m"  autocomplete="off" />
-    <button>Send Message</button>
-</form>
-
-
 </body>
+<script>
+    const socket = io();
+    const usernameSpan = document.getElementById("username");
+    const groupnameSpan =document.getElementById("groupname");
+    const fotoSpan=document.getElementById("foto")
+
+    socket.on('connect', () => {
+
+        socket.emit('whoami', (username) => {
+            usernameSpan.innerText = username;
+
+        });
+        socket.emit ('whoarewe', (groupname)=> {
+            groupnameSpan.innerText = groupname;
+        })
+
+        socket.emit('whatsfoto',(foto)=> {
+            fotoSpan.innerText = foto;
+        })
+    });
+</script>
 
 </html>
