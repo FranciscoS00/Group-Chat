@@ -50,7 +50,8 @@ const msgSchema = new mongoose.Schema({
     username: String,
     conteudo: String,
     data: Date,
-    id: Number
+    id: Number,
+    pertence: String
 });
 
 const pendSchema = new mongoose.Schema({
@@ -113,6 +114,11 @@ app.get("/criarChat", ensureLoggedIn('/'), (req, res) => {
 app.get("/pedidos", ensureLoggedIn('/'), (req,res) => {
     res.render("pedidos.ejs");
 })
+
+app.get("/aceder", ensureLoggedIn('/'), (req,res) => {
+    res.render("chats.ejs");
+});
+
 
 app.post("/login",passport.authenticate("local", {
         successRedirect: "/",
@@ -233,6 +239,12 @@ app.post("/criarChat", function(req, res) {
 
 });
 
+app.post("/chatroom", ensureLoggedIn('/'), (req,res) => {
+
+    res.render('chatroom.ejs');
+
+});
+
 app.post("/pedidos", function (req,res){
     if(req.body.resposta === "aceitar"){
         ChatController.Aceitar(db,req);
@@ -282,6 +294,12 @@ io.on('connect', (socket) => {
 
     socket.on('pendentes', (cb) => {
         ChatController.Pendentes(db,socket,function (result){
+            cb(result);
+        })
+    });
+
+    socket.on('aceder', (cb) => {
+        ChatController.ChatsDisponiveis(db,socket,function (result){
             cb(result);
         })
     });

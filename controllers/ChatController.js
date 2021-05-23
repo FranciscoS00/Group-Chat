@@ -29,9 +29,14 @@ function Rejeitar(db,req){ //remover o user da base de dados com o nome e userna
         Chat.removePendentes(db,req.body.username,req.body.chatsPendentes);
 }
 
+function ChatsDisponiveis(db, socket, callback){
+    Chat.pertenceConversa(db, socket.request.user.username, callback);
+}
+
 module.exports = {
     ChatTaken,
     Pendentes,
     Aceitar,
-    Rejeitar
+    Rejeitar,
+    ChatsDisponiveis
 };

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Aceder chat</title>
+</head>
+<body>
+<p>Username: <span id="username"></span></p>
+<form action="/chatroom" method="post">
+    <input type="text" name="username" id="usernameID" hidden>
+    <div id="escolherChat"></div>
+    <div id="aceder"></div>
+</form>
+
+
+<script>
+    function AcederChat(chats){
+        if(chats.length!==0){
+            for(var i=0;i<chats.length;i++){
+                var chatPendente = document.createElement("p");
+                chatPendente.setAttribute("id",i);
+                chatPendente.innerText = chats[i].nome;
+                document.getElementById("escolherChat").appendChild(chatPendente);
+                var chatPendente = document.createElement("input");
+                chatPendente.setAttribute("name","chatsPendentes");
+                chatPendente.setAttribute("value",chats[i].nome);
+                chatPendente.setAttribute("type","checkbox");
+                document.getElementById(i).appendChild(chatPendente);
+            }
+            var chatPendente = document.createElement("input");
+            chatPendente.setAttribute("name","resposta");
+            chatPendente.setAttribute("value","aceder");
+            chatPendente.setAttribute("type","submit");
+            document.getElementById("aceder").appendChild(chatPendente);
+                    }
+        else{
+            var chatPendente = document.createElement("p");
+            chatPendente.innerText = "Não está associado a nenhum chat";
+            document.getElementById("escolherChat").appendChild(chatPendente);
+        }
+    }
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const usernameSpan = document.getElementById("username");
+
+    socket.on('connect', () => {
+
+        socket.emit('whoami', (username) => {
+            usernameSpan.innerText = username;
+            document.getElementById("usernameID").setAttribute("value",username);
+        });
+
+        socket.emit('aceder', (chats) => {
+            AcederChat(chats);
+        });
+    });
+</script>
+</body>
+</html>

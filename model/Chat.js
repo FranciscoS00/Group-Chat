@@ -18,6 +18,14 @@ function getPendentes(db,username,callback){
     });
 }
 
+function pertenceConversa(db, username, callback){
+    var filters = {};
+    if(username !== undefined) filters.participante = username;
+    db.collection('chats').find(filters).toArray(function(err, result){
+        callback(result);
+    });
+}
+
 function removePendentes(db,username,nome){
     if(username!==undefined && nome!==undefined) {
         db.collection('pendentes').remove({username: username, nome: nome});
@@ -40,5 +48,6 @@ module.exports = {
     getChat,
     getPendentes,
     removePendentes,
-    colocarNoChat
+    colocarNoChat,
+    pertenceConversa
 }
