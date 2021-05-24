@@ -6,12 +6,20 @@
 </head>
 <body>
 <p>Username: <span id="username"></span></p>
-<form action="/chatroom" method="post">
+<form action="/chatroom" method="post" id="form">
     <input type="text" name="username" id="usernameID" hidden>
     <div id="escolherChat"></div>
     <div id="aceder"></div>
 </form>
 
+<script>
+    document.getElementById("form").addEventListener('change', updateValue);
+
+    function updateValue (e) {
+        var x = document.getElementById("form");
+        x.setAttribute("action","/chatroom?x="+e.target.value);
+    }
+</script>
 
 <script>
     function AcederChat(chats){

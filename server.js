@@ -177,8 +177,10 @@ app.post("/criarChat", function(req, res) {
         }
         else{
             var date = new Date();
-            var chatDB = '{ "nome":"' + req.body.chatname + '", "data":"' + date + '", "criador":"' + req.body.username + '", "participante":[ "';
-
+            if(req.body.chatname==="")
+                var chatDB = '{ "nome":"' + date + '", "data":"' + date + '", "criador":"' + req.body.username + '", "participante":[ "';
+            else
+                var chatDB = '{ "nome":"' + req.body.chatname + '", "data":"' + date + '", "criador":"' + req.body.username + '", "participante":[ "';
             for(var i=0;i<req.body.numeroElementos;i++) {
                 if(req.body.numeroElementos==1)
                     chatDB = chatDB + req.body.elementosChat;
