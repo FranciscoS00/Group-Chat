@@ -50,8 +50,6 @@ const msgSchema = new mongoose.Schema({
     username: String,
     conteudo: String,
     data: Date,
-    id: Number,
-    pertence: String
 });
 
 const pendSchema = new mongoose.Schema({
@@ -73,7 +71,7 @@ userSchema.methods.verifyPassword = function (password) {
 //Compile the schema into a model
 const User = mongoose.model('User', userSchema);
 const Chat = mongoose.model('Chat', chatSchema);
-const Msg = mongoose.model('Msg', msgSchema);
+const Msg = mongoose.model('mensagens', msgSchema);
 const Pendente = mongoose.model('pendente',pendSchema);
 const MembroChat = mongoose.model('membroChat',membroSchema);
 
@@ -316,11 +314,19 @@ io.on('connect', (socket) => {
     });
 
 
-    socket.on('chat message',function(msg){
-        console.log('message: '+msg);
-        var mensagem = {msg:msg, id:socket.request.user.username};
-        io.emit('chat message', mensagem);
-    })
+    socket.on('chat message',function(msg) {
+        console.log('message: ' + msg);
+        var mensagem = {msg: msg, id: socket.request.user.username};
+        let saveMSG = new Msg({
+            username: socket.request.user.username,
+            conteudo: msg,
+            data: Date.now()
+        })
+        saveMSG.save(function (err, instance) {
+            if (err) return console.error(err);
+            io.emit('chat message', mensagem);
+        })
+    });
 
 });
 
