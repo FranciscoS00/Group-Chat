@@ -1,28 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Passport example</title>
-    </head>
-    <body>
-        <p>Register</p>
-        <form action="/register" method="post" enctype="multipart/form-data">
-            <div>
-                <label>Username:</label>
-                <input type="text" name="username" required>
-                <br/>
-            </div>
-            <div>
-                <label>Password:</label>
-                <input type="password" name="password" required>
-            </div>
-            <div>
-                <label>Imagem de Perfil:</label>
-                <input type="file" name="imagemPerfil"
-            </div>
-            <div>
-                <input type="submit" value="Submit">
-            </div>
-        </form>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <title>Passport example</title>
+    <%- include('./partials/head') %>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"
+          rel="stylesheet">
+
+</head>
+<body class="pag">
+
+<div class="regbar">
+    <div class="reg">
+        Register
+    </div>
+</div>
+<div class="formcontainer3">
+    <form class="formlogin" action="/register" method="post" enctype="multipart/form-data">
+        <div class="formpart">
+            <label>Username:</label>
+            <input type="text" name="username" required>
+            <br/>
+        </div>
+        <div class="formpart">
+            <label>Password:</label>
+            <input type="password" name="password" required>
+        </div>
+        <div class="formpart">
+            <label><i class="material-icons">image_search</i> Imagem de Perfil:</label>
+            <input type="file" name="imagemPerfil">
+        </div>
+        <div class="formpart">
+            <button type="submit" value="Submit">Submit</button>
+        </div>
+    </form>
+</div>
+
+</body>
 </html>

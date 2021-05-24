@@ -40,16 +40,17 @@
             <div class="name"><span id="username"></span></div>
             <button><i class="material-icons">mode</i></button>
         </div>
-        <div class="right"> <button><i class="material-icons">groups</i></button><button><i class="material-icons">notifications</i></button></div>
-
+        <div class="right">
+            <button><i class="material-icons">groups</i></button>
+            <button><i class="material-icons">notifications</i></button>
+            <form id="logout" method="post" action="/logout"><button value="Log out" type="submit"><i class="material-icons">logout</i></button></form>
+        </div>
     </div>
 
     <div class="chat-container">
         <div class="chat" id="messages">
 
-
             <script>
-
                 function intToRGB(i) {
                     var c = (i & 0x00FFFFFF)
                         .toString(16)
@@ -75,7 +76,7 @@
                     //We don't need to pass the name, it will be obtained from the session
                     socket.emit("join");
 
-                    $('form').submit(function () {
+                    $('#message').submit(function () {
                         socket.emit('chat message', $('#m').val());
                         console.log($('#m').val());
                         $('#m').val('');
@@ -94,7 +95,7 @@
 
             </script>
         </div>
-        <form class="message-drawer">
+        <form id="message" class="message-drawer">
             <div class="emoji">
                 <i class="material-icons">mood</i>
             </div>
@@ -123,8 +124,8 @@
 <script>
     const socket = io();
     const usernameSpan = document.getElementById("username");
-    const groupnameSpan =document.getElementById("groupname");
-    const fotoSpan=document.getElementById("foto")
+    /*const groupnameSpan =document.getElementById("groupname");
+    const fotoSpan=document.getElementById("foto")*/
 
     socket.on('connect', () => {
 
@@ -132,14 +133,16 @@
             usernameSpan.innerText = username;
 
         });
+        /*
         socket.emit ('whoarewe', (groupname)=> {
             groupnameSpan.innerText = groupname;
         })
 
         socket.emit('whatsfoto',(foto)=> {
             fotoSpan.innerText = foto;
-        })
+        })*/
     });
 </script>
 
 </html>
+

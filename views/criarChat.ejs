@@ -3,30 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <title>Passport example</title>
+    <%- include('./partials/head') %>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Round"
+          rel="stylesheet">
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Sharp"
+          rel="stylesheet">
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Two+Tone"
+          rel="stylesheet">
+
+
 </head>
-<body>
-<p>Create your chatroom <span id="username"></span></p>
 
-<form action="/criarChat" method="post">
-    <input type="text" name="username" id="usernameID" hidden>
-    <div>
-        <label>Chat Name:</label>
-        <input type="text" name="chatname" required>
-        <br/>
-    </div>
-    <div id="elementos do chat">
-        <label>Number of diferent usernames that will take part of the chatroom:</label>
-        <input type="number" name="numeroElementos" id="numeroElementos" class="numeroElementos" required>
-    </div>
-    <div id="regras do chat">
-        <label>Number of diferent rules of the chatroom:</label>
-        <input type="number" name="numeroRegras" id="numeroRegras" class="numeroRegras" required>
-    </div>
-    <div>
-        <input type="submit" value="Submit">
-    </div>
-</form>
 
+<body class="pag">
+<div class="topbar">
+    <button><i class="material-icons">cancel</i></button>
+</div>
+<div class="userbar">
+    <div class="left">
+        <div class="profpic"><img src="http://www.codeproject.com/KB/GDI-plus/ImageProcessing2/img.jpg"> </div>
+        <div class="name"><span id="username"></span></div>
+        <button><i class="material-icons">mode</i></button>
+        <div class="aut">Create your chatroom</div>
+    </div>
+    <div class="right">
+        <button><i class="material-icons">groups</i></button>
+        <button><i class="material-icons">notifications</i></button>
+        <form method="post" action="/logout"><button value="Log out" type="submit"><i class="material-icons">logout</i></button></form>
+    </div>
+</div>
+
+<div class="regbar">
+    <div class="reg">
+        <p></p>
+    </div>
+    <div class="reg">
+        <span id="username"></span>
+    </div>
+
+</div>
+<div class="formcontainer2">
+    <form class="formchat" action="/criarChat" method="post">
+        <input type="text" name="username" id="usernameID" hidden>
+        <div class="formpart">
+            <label>Chat Name:</label>
+            <input type="text" name="chatname" required>
+            <br/>
+        </div>
+        <div class="formpart" id="elementos do chat">
+            <label>Number of diferent usernames that will take part of the chatroom:</label>
+            <input type="number" name="numeroElementos" id="numeroElementos" class="numeroElementos" required>
+        </div>
+        <div class="formpart" id="regras do chat">
+            <label>Number of diferent rules of the chatroom:</label>
+            <input type="number" name="numeroRegras" id="numeroRegras" class="numeroRegras" required>
+        </div>
+        <div class="formpart">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+</div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const socket = io();
