@@ -34,15 +34,16 @@
     <div class="userbar">
         <div class="left">
             <button><i class="material-icons">menu</i></button>
-            <div class="groupname"><span id="groupname">Groupname</span></div>
+            <div class="groupname"><span id="chats"></span></div>
             <div class="profpic"><img src="http://www.codeproject.com/KB/GDI-plus/ImageProcessing2/img.jpg"> </div>
             <div class="name"><span id="username"></span></div>
             <button><i class="material-icons">mode</i></button>
         </div>
         <div class="right">
-            <button><i class="material-icons">groups</i></button>
-            <button><i class="material-icons">notifications</i></button>
+           <!--<button><i class="material-icons">groups</i></button>-->
+            <form id="aceder" method="get" action="/aceder"><button value="aceder" type="submit" ><i class="material-icons">groups</i></button></form>
             <form id="logout" method="post" action="/logout"><button value="Log out" type="submit"><i class="material-icons">logout</i></button></form>
+
         </div>
     </div>
 
@@ -103,7 +104,6 @@
             <div class="emoji">
                 <i class="material-icons">mood</i>
             </div>
-
             <input class="input-msg" name="form" placeholder="Send a message" autocomplete="off" autofocus id="m"></input>
 
             <div class="photo">
@@ -123,6 +123,15 @@
 <script>
     const socket = io();
     const usernameSpan = document.getElementById("username");
+    const chatsSpan =document.getElementById("chats").innerText=susbstrin();
+
+    function susbstrin(){
+        var string=window.location.href;
+        var subsstrin=string.split('x=');
+        return subsstrin[1];
+    }
+
+
 
     socket.on('connect', () => {
 
@@ -130,7 +139,6 @@
             usernameSpan.innerText = username;
 
         });
-
     });
 </script>
 

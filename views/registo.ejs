@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Passport example</title>
+    <title>Register</title>
     <%- include('./partials/head') %>
 
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons"
@@ -14,9 +14,14 @@
 </head>
 <body class="pag">
 
+<div class="regbar2">
+    <form id="logout" method="post" action="/logout"><button value="Log out" type="submit">I alredy have an account</button></form>
+
+</div>
+
 <div class="regbar">
     <div class="reg">
-        Register
+        Create your account!
     </div>
 </div>
 <div class="formcontainer3">
@@ -31,9 +36,9 @@
             <input type="password" name="password" required>
         </div>
         <div class="formpart">
-            <label><i class="material-icons">image_search</i> Imagem de Perfil:</label>
-            <input type="file" name="imagemPerfil">
+            <label class="formpart1"><i class="material-icons">upload_file</i> Imagem de Perfil:</label>
         </div>
+        <div class="formpart"><input type="file" name="imagemPerfil"></div>
         <div class="formpart">
             <button type="submit" value="Submit">Submit</button>
         </div>
