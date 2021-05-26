@@ -33,8 +33,25 @@ function ChatsDisponiveis(db, socket, callback){
     Chat.pertenceConversa(db, socket.request.user.username, callback);
 }
 
+function getMsgId(db,i,callback){
+    Chat.getMsgId(db,i,function cb(x){
+        if(x.length===0){
+            callback(i);
+        }
+        else{
+            i++;
+            getMsgId(db,i,callback);
+        }
+    })
+}
+
 function MensagensChat(db,pertence ,callback){
     Chat.MensagemPertence(db, pertence,callback);
+}
+
+function imagemConversa(db, socket, callback){
+    Chat.imagemConversa(db, socket.request.user.username, callback);
+
 }
 
 module.exports = {
@@ -43,5 +60,7 @@ module.exports = {
     Aceitar,
     Rejeitar,
     ChatsDisponiveis,
+    getMsgId,
+    imagemConversa,
     MensagensChat
 };

@@ -32,6 +32,22 @@ function removePendentes(db,username,nome){
     }
 }
 
+function getMsgId(db,id ,callback){
+    var filters = { };
+    if(id !== undefined) filters.id = id;
+    db.collection('mensagens').find(filters).toArray((err,result)=>{
+        callback(result)
+    });
+}
+
+function imagemConversa(db, imagem, callback){
+    var filters = {};
+    if(imagem !== undefined) filters.username = imagem;
+    db.collection('users').find(filters).toArray(function(err, result){
+        callback(result);
+    });
+}
+
 function colocarNoChat(db,username,nome){
     if(username!==undefined && nome!==undefined) {
         var filters = { };
@@ -60,5 +76,7 @@ module.exports = {
     removePendentes,
     colocarNoChat,
     pertenceConversa,
-    MensagemPertence
+    MensagemPertence,
+    imagemConversa,
+    getMsgId
 }

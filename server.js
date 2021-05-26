@@ -1,3 +1,4 @@
+const express=require("express");
 const app = require("express")();
 const server = require("http").createServer(app);
 const port = process.env.PORT || 3000;
@@ -50,6 +51,7 @@ const msgSchema = new mongoose.Schema({
     username: String,
     conteudo: String,
     data: Date,
+    id: Number,
     pertence: String
 });
 
@@ -84,6 +86,8 @@ passport.use(new LocalStrategy(function(username, password, done) {
         return done(null, user);
     });
 }));
+
+app.use('/uploads', express.static('uploads'));
 
 app.get("/", (req, res) => {
     const isAuthenticated = !!req.user;
@@ -315,30 +319,42 @@ io.on('connect', (socket) => {
     //Chat
     socket.on("join", function(){
         console.log(socket.request.user.username+" joined server");
+        alert(socket.request.user.username+" has joined the server");
         io.emit("update", socket.request.user.username + " has joined the server.");
     });
 
 
     socket.on("mensagens guardadas", function(){
         ChatController.MensagensChat(db,chatAcedido,function (result){
+
             io.emit('send',result);
+        });
+    });
+
+    socket.on('looklike', (cb) => {
+        ChatController.imagemConversa(db,socket,function(imagem){
+            cb(imagem);
         });
     });
 
     socket.on('chat message',function(msg) {
         console.log('message: ' + msg);
         var mensagem = {msg: msg, id: socket.request.user.username};
-        let saveMSG = new Msg({
-            username: socket.request.user.username,
-            conteudo: msg,
-            data: Date.now(),
-            pertence: chatAcedido
-        })
-        saveMSG.save(function (err, instance) {
-            if (err) return console.error(err);
-            io.emit('chat message', mensagem);
-        })
-    });
+        ChatController.getMsgId(db,0,(id)=>{
+            let saveMSG = new Msg({
+                username: socket.request.user.username,
+                conteudo: msg,
+                id: id,
+                data: Date.now(),
+                pertence: chatAcedido
+            })
+            saveMSG.save(function (err, instance) {
+                if (err) return console.error(err);
+                io.emit('chat message', mensagem);
+            })
+        });
+
+    })
 
 });
 
