@@ -319,12 +319,8 @@ io.on('connect', (socket) => {
 
 
     socket.on("mensagens guardadas", function(){
-        var mensagem;
         ChatController.MensagensChat(db,"principal",function (result){
-            mensagem = result;
-            for(let i =0; i<mensagem.length; i++){
-                ;
-            }
+            io.emit('send',result);
         });
     });
 

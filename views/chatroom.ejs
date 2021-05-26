@@ -97,6 +97,25 @@
                         scrollDown()
                     });
 
+                    socket.on('send',(result)=>{
+                        document.getElementsByClassName("message sent").remove();
+                        document.getElementsByClassName("message received").remove();
+                        for(let i =0; i<result.length; i++){
+                            if (result[i].username === usernameSpan.innerText) {
+                                var y=document.createElement('div');
+                                y.setAttribute('class','message sent');
+                                y.innerText = result[i].username + ":" + result[i].conteudo;
+                                document.getElementById('messages').appendChild(y);
+
+                            }else{
+                                var y=document.createElement('div');
+                                y.setAttribute('class','message received');
+                                y.innerText = result[i].username + ":" + result[i].conteudo;
+                                document.getElementById('messages').appendChild(y);
+                            }
+                        }
+                    })
+
                 });
 
             </script>
@@ -132,6 +151,17 @@
         var uri_dec = decodeURIComponent(uri);
         var uri_split= uri_dec.split("x=");
         return uri_split[1];
+    }
+
+    Element.prototype.remove = function() {
+        this.parentElement.removeChild(this);
+    }
+    NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
+        for(var i = this.length - 1; i >= 0; i--) {
+            if(this[i] && this[i].parentElement) {
+                this[i].parentElement.removeChild(this[i]);
+            }
+        }
     }
 
 
