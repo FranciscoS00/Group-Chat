@@ -79,6 +79,7 @@
 
                     //We don't need to pass the name, it will be obtained from the session
                     socket.emit("join");
+                    socket.emit("mensagens guardadas");
 
                     $('#message').submit(function () {
                         socket.emit('chat message', $('#m').val());
@@ -95,6 +96,7 @@
                         $('#messages').append('<div class="message received">' + (msg) + '</div>');
                         scrollDown()
                     });
+
                 });
 
             </script>

@@ -314,11 +314,18 @@ io.on('connect', (socket) => {
     socket.on("join", function(){
         console.log(socket.request.user.username+" joined server");
         io.emit("update", socket.request.user.username + " has joined the server.");
-        ChatController.MensagensChat(db,"principal",function (result){
-            var mensagem = result;
-        })
     });
 
+
+    socket.on("mensagens guardadas", function(){
+        var mensagem;
+        ChatController.MensagensChat(db,"principal",function (result){
+            mensagem = result;
+            for(let i =0; i<mensagem.length; i++){
+                io.emit('update', mensagem[i].username + ": " + mensagem[i].conteudo);
+            }
+        });
+    });
 
     socket.on('chat message',function(msg) {
         console.log('message: ' + msg);
