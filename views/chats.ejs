@@ -44,6 +44,7 @@
         <form class="form2" action="/chatroom" method="post" id="form">
             <div class="formlogin">Escolha o chat</div>
             <input type="text" name="username" id="usernameID" hidden>
+            <input type="hidden" name="chat" id="groupID">
             <div class="formpart2" id="escolherChat"></div>
             <div class="formpart" id="aceder"></div>
         </form>
@@ -55,6 +56,7 @@
     function updateValue (e) {
         var x = document.getElementById("form");
         x.setAttribute("action","/chatroom?x="+e.target.value);
+        document.getElementById("groupID").setAttribute("value",e.target.value);
     }
 
 </script>

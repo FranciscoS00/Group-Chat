@@ -240,10 +240,11 @@ app.post("/criarChat", function(req, res) {
 
 });
 
-app.post("/chatroom", ensureLoggedIn('/'), (req,res) => {
+var chatAcedido;
+app.post("/chatroom", ensureLoggedIn('/'), function(req,res) {
     res.render('chatroom.ejs');
-
-});
+    chatAcedido = req.body.chat;
+})
 
 app.post("/pedidos", function (req,res){
     if(req.body.resposta === "aceitar"){
@@ -319,7 +320,7 @@ io.on('connect', (socket) => {
 
 
     socket.on("mensagens guardadas", function(){
-        ChatController.MensagensChat(db,"principal",function (result){
+        ChatController.MensagensChat(db,chatAcedido,function (result){
             io.emit('send',result);
         });
     });
@@ -331,7 +332,7 @@ io.on('connect', (socket) => {
             username: socket.request.user.username,
             conteudo: msg,
             data: Date.now(),
-            pertence: "principal"
+            pertence: chatAcedido
         })
         saveMSG.save(function (err, instance) {
             if (err) return console.error(err);
