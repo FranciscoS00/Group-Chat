@@ -50,6 +50,7 @@ const msgSchema = new mongoose.Schema({
     username: String,
     conteudo: String,
     data: Date,
+    pertence: String
 });
 
 const pendSchema = new mongoose.Schema({
@@ -313,6 +314,7 @@ io.on('connect', (socket) => {
     socket.on("join", function(){
         console.log(socket.request.user.username+" joined server");
         io.emit("update", socket.request.user.username + " has joined the server.");
+        var mensagens = ChatController.MensagensChat(db, "principal");
     });
 
 
@@ -322,7 +324,8 @@ io.on('connect', (socket) => {
         let saveMSG = new Msg({
             username: socket.request.user.username,
             conteudo: msg,
-            data: Date.now()
+            data: Date.now(),
+            pertence: "principal"
         })
         saveMSG.save(function (err, instance) {
             if (err) return console.error(err);

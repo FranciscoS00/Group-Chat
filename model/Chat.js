@@ -44,10 +44,20 @@ function colocarNoChat(db,username,nome){
     }
 }
 
+function MensagemPertence(db, id){
+    if(id!==undefined) {
+        var filters = {};
+        filters.pertence = id;
+        var resultado = db.collection('mensagens').find(filters).toArray()
+        return resultado;
+    }
+}
+
 module.exports = {
     getChat,
     getPendentes,
     removePendentes,
     colocarNoChat,
-    pertenceConversa
+    pertenceConversa,
+    MensagemPertence
 }

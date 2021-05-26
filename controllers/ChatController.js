@@ -33,10 +33,15 @@ function ChatsDisponiveis(db, socket, callback){
     Chat.pertenceConversa(db, socket.request.user.username, callback);
 }
 
+function MensagensChat(db, conversa){
+    Chat.MensagemPertence(db, conversa)
+}
+
 module.exports = {
     ChatTaken,
     Pendentes,
     Aceitar,
     Rejeitar,
-    ChatsDisponiveis
+    ChatsDisponiveis,
+    MensagensChat
 };

@@ -27,10 +27,9 @@
 
 
 </head>
-<body>
+<body class="pag">
 <div class="page">
     <div class="topbar">
-        <button><i class="material-icons">cancel</i></button>
     </div>
     <div class="userbar">
         <div class="left">
@@ -47,10 +46,14 @@
         </div>
     </div>
 
-    <div class="chat-container">
+    <div class="chat-container" id="chatbox">
         <div class="chat" id="messages">
 
             <script>
+
+                function scrollDown() {
+                    document.getElementById('chatbox').scrollTop =  document.getElementById('chatbox').scrollHeight
+                }
                 function intToRGB(i) {
                     var c = (i & 0x00FFFFFF)
                         .toString(16)
@@ -68,10 +71,10 @@
                     console.log(result);
                     return result;
                 }
-
                 $(document).ready(function () {
 
                     var socket = io();
+
 
                     //We don't need to pass the name, it will be obtained from the session
                     socket.emit("join");
@@ -84,16 +87,17 @@
                     });
                     socket.on('chat message', function (msg) {
                         $('#messages').append('<div class="message sent">' +  ' ' + (msg.id + ":" + msg.msg) + '</div>');
-                        window.scrollTo(0,document.body.scrollHeight);
+                        scrollDown()
                     });
 
                     socket.on('update',function(msg){
                         $('#messages').append('<div class="message received">' + (msg) + '</div>');
-                        window.scrollTo(0,document.body.scrollHeight);
+                        scrollDown()
                     });
                 });
 
             </script>
+
         </div>
         <form id="message" class="message-drawer">
             <div class="emoji">
@@ -114,18 +118,11 @@
         </form>
     </div>
 
-
-
-
-
-
 </div>
 </body>
 <script>
     const socket = io();
     const usernameSpan = document.getElementById("username");
-    /*const groupnameSpan =document.getElementById("groupname");
-    const fotoSpan=document.getElementById("foto")*/
 
     socket.on('connect', () => {
 
@@ -133,14 +130,7 @@
             usernameSpan.innerText = username;
 
         });
-        /*
-        socket.emit ('whoarewe', (groupname)=> {
-            groupnameSpan.innerText = groupname;
-        })
 
-        socket.emit('whatsfoto',(foto)=> {
-            fotoSpan.innerText = foto;
-        })*/
     });
 </script>
 

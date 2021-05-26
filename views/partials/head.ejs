@@ -70,7 +70,8 @@
     }
 
     .regbar {
-        display: block;
+        display: flex;
+        flex-direction: column;
         height: 70px;
         background: #dbdbdb; /* 2554C7*/
         color: black;
@@ -106,7 +107,6 @@
         display: flex;
         flex-direction: column;
         padding: 20px 20px 20px 20px;
-        margin-top: 20px;
         font-size: 25px;
     }
     .formpart{
@@ -255,22 +255,17 @@
 
     .chat-container{
         position: relative;
-        min-height: 880px;
-        height:100%;
+        height: 810px;
         background: #a3a3a3 url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCGcQ529gyEgYfV7uYj9wTazbkmZ4RYsv0Qw&usqp=CAU");
         background-repeat: repeat ;
         z-index: 0;
-        overflow: hidden;
+        overflow-x: scroll;
 
         /*https://i.pinimg.com/originals/19/fc/21/19fc21dc1f8a339ea8f302c75320a28f.jpg */
     }
 
     .chat-container .chat{
         background: #a3a3a3;
-    }
-
-    .chat-container .message-drawer{
-
     }
 
     .chat-container .message-drawer .input-msg {
@@ -394,7 +389,7 @@
         color: #000;
         clear: both;
         line-height: 18px;
-        font-size: 15px;
+        font-size: 17px;
         padding: 8px;
         position: relative;
         margin: 8px 0;
