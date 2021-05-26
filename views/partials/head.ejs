@@ -479,6 +479,7 @@
     }
 
     .message.sent {
+        display: flex;
         margin-right: 10px;
         background: #B3B3B3 ; /* 4EE2EC*/
         border-radius: 5px 0px 5px 5px;
@@ -491,6 +492,24 @@
         border-color: transparent #B3B3B3;/* 4EE2EC*/
         top: 0;
         right: -10px;
+    }
+    .message.sent button{
+        background-color: #B3B3B3;
+        border-style: hidden;
+
+    }
+
+    .message.sent i{
+        opacity: 0;
+        font-size: 18px;
+        background-color: #B3B3B3;
+        color: #c95959;
+
+    }
+
+    .message.sent:hover i{
+        opacity: 1;
+
     }
 
 </style>

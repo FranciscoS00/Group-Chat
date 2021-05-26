@@ -87,7 +87,7 @@
                         return false;
                     });
                     socket.on('chat message', function (msg) {
-                        $('#messages').append('<div class="message sent">' +  ' ' + (msg.id + ":" + msg.msg) + '</div>');
+                        $('#messages').append('<div class="message sent">' +  ' ' + (msg.id + ":" + msg.msg) + '<form><button><i class="material-icons">delete</i></button></form></div>');
                         scrollDown()
                     });
 

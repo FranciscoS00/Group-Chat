@@ -241,7 +241,6 @@ app.post("/criarChat", function(req, res) {
 });
 
 app.post("/chatroom", ensureLoggedIn('/'), (req,res) => {
-
     res.render('chatroom.ejs');
 
 });
@@ -292,6 +291,7 @@ io.on('connect', (socket) => {
     socket.on('whoami', (cb) => {
         cb(socket.request.user.username);
     });
+
 
     socket.on('pendentes', (cb) => {
         ChatController.Pendentes(db,socket,function (result){
