@@ -314,7 +314,9 @@ io.on('connect', (socket) => {
     socket.on("join", function(){
         console.log(socket.request.user.username+" joined server");
         io.emit("update", socket.request.user.username + " has joined the server.");
-        var mensagens = ChatController.MensagensChat(db, "principal");
+        ChatController.MensagensChat(db,"principal",function (result){
+            var mensagem = result;
+        })
     });
 
 

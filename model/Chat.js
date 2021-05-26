@@ -44,14 +44,15 @@ function colocarNoChat(db,username,nome){
     }
 }
 
-function MensagemPertence(db, id){
-    if(id!==undefined) {
-        var filters = {};
-        filters.pertence = id;
-        var resultado = db.collection('mensagens').find(filters).toArray()
-        return resultado;
-    }
+function MensagemPertence(db,id,callback){
+    var filters = { };
+
+    if(id !== undefined) filters.pertence = id;
+    db.collection('mensagens').find(filters).toArray(function(err,result){
+        callback(result);
+    });
 }
+
 
 module.exports = {
     getChat,
