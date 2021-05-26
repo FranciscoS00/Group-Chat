@@ -28,8 +28,7 @@
     </div>
     <div class="userbar">
         <div class="left">
-            <button><i class="material-icons">menu</i></button>
-            <div class="groupname"><span id="chats"></span></div>
+            <form id="index" method="get" action="http://localhost:3000/"><button><i class="material-icons">home</i></button></form>
             <div class="profpic"><img src="http://www.codeproject.com/KB/GDI-plus/ImageProcessing2/img.jpg"> </div>
             <div class="name"><span id="username"></span></div>
             <button><i class="material-icons">mode</i></button>
@@ -40,14 +39,15 @@
         </div>
     </div>
 
-<div class="formcontainer">
+    <div class="formcontainer">
 
-<form class="form2" action="/chatroom" method="post" id="form">
-    <div class="formlogin">Escolha o chat</div>
-    <input type="text" name="username" id="usernameID" hidden>
-    <div class="formpart2" id="escolherChat"></div>
-    <div class="formpart" id="aceder"></div>
-</form>
+        <form class="form2" action="/chatroom" method="post" id="form">
+            <div class="formlogin">Escolha o chat</div>
+            <input type="text" name="username" id="usernameID" hidden>
+            <div class="formpart2" id="escolherChat"></div>
+            <div class="formpart" id="aceder"></div>
+        </form>
+    </div>
 </div>
 <script>
     document.getElementById("form").addEventListener('change', updateValue);
