@@ -310,6 +310,7 @@ io.on('connect', (socket) => {
     session.socketId = socket.id;
     session.save();
 
+
     //Chat
     socket.on("join", function(){
         console.log(socket.request.user.username+" joined server");
@@ -322,7 +323,7 @@ io.on('connect', (socket) => {
         ChatController.MensagensChat(db,"principal",function (result){
             mensagem = result;
             for(let i =0; i<mensagem.length; i++){
-                io.emit('update', mensagem[i].username + ": " + mensagem[i].conteudo);
+                ;
             }
         });
     });

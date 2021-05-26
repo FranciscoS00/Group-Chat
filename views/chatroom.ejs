@@ -125,12 +125,13 @@
 <script>
     const socket = io();
     const usernameSpan = document.getElementById("username");
-    const chatsSpan =document.getElementById("chats").innerText=susbstrin();
+    const chatsSpan =document.getElementById("chats").innerText=decodestr();
 
-    function susbstrin(){
-        var string=window.location.href;
-        var subsstrin=string.split('x=');
-        return subsstrin[1];
+    function decodestr() {
+        var uri = window.location.href;
+        var uri_dec = decodeURIComponent(uri);
+        var uri_split= uri_dec.split("x=");
+        return uri_split[1];
     }
 
 

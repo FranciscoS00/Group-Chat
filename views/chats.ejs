@@ -1,17 +1,54 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <%- include('./partials/head') %>
     <meta charset="UTF-8">
     <title>Aceder chat</title>
-</head>
-<body>
-<p>Username: <span id="username"></span></p>
-<form action="/chatroom" method="post" id="form">
-    <input type="text" name="username" id="usernameID" hidden>
-    <div id="escolherChat"></div>
-    <div id="aceder"></div>
-</form>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons"
+          rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Round"
+          rel="stylesheet">
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Sharp"
+          rel="stylesheet">
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Two+Tone"
+          rel="stylesheet">
+
+</head>
+<body class="pag">
+<div class="page">
+    <div class="topbar">
+    </div>
+    <div class="userbar">
+        <div class="left">
+            <button><i class="material-icons">menu</i></button>
+            <div class="groupname"><span id="chats"></span></div>
+            <div class="profpic"><img src="http://www.codeproject.com/KB/GDI-plus/ImageProcessing2/img.jpg"> </div>
+            <div class="name"><span id="username"></span></div>
+            <button><i class="material-icons">mode</i></button>
+        </div>
+        <div class="right">
+            <form id="logout" method="post" action="/logout"><button value="Log out" type="submit"><i class="material-icons">logout</i></button></form>
+
+        </div>
+    </div>
+
+<div class="formcontainer">
+
+<form class="form2" action="/chatroom" method="post" id="form">
+    <div class="formlogin">Escolha o chat</div>
+    <input type="text" name="username" id="usernameID" hidden>
+    <div class="formpart2" id="escolherChat"></div>
+    <div class="formpart" id="aceder"></div>
+</form>
+</div>
 <script>
     document.getElementById("form").addEventListener('change', updateValue);
 
