@@ -122,6 +122,10 @@ app.get("/aceder", ensureLoggedIn('/'), (req,res) => {
     res.render("chats.ejs");
 });
 
+app.get("/editar", ensureLoggedIn('/'), (req,res) => {
+    res.render("editprofile.ejs");
+});
+
 
 app.post("/login",passport.authenticate("local", {
         successRedirect: "/",
@@ -130,7 +134,6 @@ app.post("/login",passport.authenticate("local", {
 );
 
 app.post("/register", upload.single('imagemPerfil') ,function(req,res){
-
     //New User in the DB
     UserController.UsernameTaken(db, req, function(result) {
         if(result.length !==0) {
@@ -161,6 +164,31 @@ app.post("/register", upload.single('imagemPerfil') ,function(req,res){
         }
     })
 });
+
+
+app.post("/editar", upload.single('newImagemPerfil') ,function(req,res){
+    UserController.UsernameTaken(db, req, function(result) {
+        if (req.body.username !== "") {
+            UserController.ChangeUsername(db, req, function (err, result) {
+                if (err) return console.error(err);
+            });
+        }
+    });
+
+    if (req.body.newPassword !== "") {
+        UserController.ChangePassword(db, req, function (err, result) {
+            if (err) return console.error(err);
+        });
+    }
+
+    if (req.file !== undefined) {
+        UserController.ChangeImage(db, req, function (err, result) {
+            if (err) return console.error(err);
+        });
+    }
+    res.redirect(307, '/login');
+});
+
 
 app.post("/logout", (req, res) => {
     console.log(`logout ${req.session.id}`);

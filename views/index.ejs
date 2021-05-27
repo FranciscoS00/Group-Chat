@@ -12,10 +12,10 @@
 </div>
 <div class="userbar">
     <div class="left">
-        <div class="profpic"><img src="http://www.codeproject.com/KB/GDI-plus/ImageProcessing2/img.jpg"> </div>
+        <div class="profpic" id="imagem"></div>
         <div class="name"><span id="username"></span></div>
-        <button><i class="material-icons">mode</i></button>
-        <div class="aut"> Authenticated! </div>
+        <form id="editar" method="get" action="/editar"><button><i class="material-icons">mode</i></button></form>
+        <div class="aut2"> Authenticated! </div>
     </div>
     <div class="right">
         <form method="post" action="/logout"><button value="Log out" type="submit"><i class="material-icons">logout</i></button></form>
@@ -23,15 +23,15 @@
 </div>
 
 </div>
-    <div class="formcontainer">
-        <div class="form2">
-            <a class="" href="/criarChat" >Create a chatroom</a><br>
-            <a href="/aceder" >Que chat aceder</a><br>
-            <a href="/pedidos" >Enter in a chat</a><br>
-            <a href="/readmitir" >Reenter in a chat that you quit</a><br>
-            <a href="/pedirReadimicao" >Pedir para ser readmitido</a><br>
-        </div>
+<div class="formcontainer">
+    <div class="form2">
+        <a class="" href="/criarChat" >Create a chatroom</a><br>
+        <a href="/aceder" >Que chat aceder</a><br>
+        <a href="/pedidos" >Enter in a chat</a><br>
+        <a href="/readmitir" >Reenter in a chat that you quit</a><br>
+        <a href="/pedirReadimicao" >Pedir para ser readmitido</a><br>
     </div>
+</div>
 </div>
 
 
@@ -44,6 +44,11 @@
 
         socket.emit('whoami', (username) => {
             usernameSpan.innerText = username;
+        });
+        socket.emit('looklike', (imagem) => {
+            var img=document.createElement('img');
+            img.setAttribute('src','/uploads/'+imagem[0].imagem);
+            document.getElementById('imagem').appendChild(img);
         });
     });
 </script>

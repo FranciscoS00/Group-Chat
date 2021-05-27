@@ -51,7 +51,6 @@ function MensagensChat(db,pertence ,callback){
 
 function imagemConversa(db, socket, callback){
     Chat.imagemConversa(db, socket.request.user.username, callback);
-
 }
 
 module.exports = {
