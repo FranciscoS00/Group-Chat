@@ -20,8 +20,8 @@ function getPendentes(db,username,callback){
 
 function pertenceConversa(db, username, callback){
     var filters = {};
-    if(username !== undefined) filters.participante = username;
-    db.collection('chats').find(filters).toArray(function(err, result){
+    if(username !== undefined) filters.username = username;
+    db.collection('membrochats').find(filters).toArray(function(err, result){
         callback(result);
     });
 }
@@ -29,6 +29,15 @@ function pertenceConversa(db, username, callback){
 function removePendentes(db,username,nome){
     if(username!==undefined && nome!==undefined) {
         db.collection('pendentes').remove({username: username, nome: nome});
+    }
+}
+
+function sairChat(db,chatAcedido,username,callback){
+    if(chatAcedido!==undefined && username!==undefined) {
+        db.collection('membroschats').remove({username: username, nome: chatAcedido});
+        db.collection('saiu').insertOne({username: username, nome: chatAcedido},(error,result)=>{
+            callback(error);
+        });
     }
 }
 
@@ -78,5 +87,6 @@ module.exports = {
     pertenceConversa,
     MensagemPertence,
     imagemConversa,
-    getMsgId
+    getMsgId,
+    sairChat
 }

@@ -289,6 +289,13 @@ app.post("/pedidos", function (req,res){
     }
 })
 
+app.post("/sairChat", ensureLoggedIn('/'),function (req,res){
+    ChatController.sairChat(db, chatAcedido, req, (err)=>{
+        if (err) return console.error(err);
+        res.redirect("/");
+    });
+})
+
 passport.serializeUser((user, cb) => {
     console.log(`serializeUser ${user.id}`);
     cb(null, user.id);

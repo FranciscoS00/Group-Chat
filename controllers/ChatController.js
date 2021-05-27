@@ -45,6 +45,10 @@ function getMsgId(db,i,callback){
     })
 }
 
+function sairChat(db,chatAcedido,req,callback){
+    Chat.sairChat(db,chatAcedido,req.body.username,callback);
+}
+
 function MensagensChat(db,pertence ,callback){
     Chat.MensagemPertence(db, pertence,callback);
 }
@@ -61,5 +65,6 @@ module.exports = {
     ChatsDisponiveis,
     getMsgId,
     imagemConversa,
-    MensagensChat
+    MensagensChat,
+    sairChat
 };
