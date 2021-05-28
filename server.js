@@ -118,6 +118,10 @@ app.get("/pedidos", ensureLoggedIn('/'), (req,res) => {
     res.render("pedidos.ejs");
 })
 
+app.get("/readmitir", ensureLoggedIn('/'), (req,res) => {
+    res.render("readmitir.ejs");
+})
+
 app.get("/aceder", ensureLoggedIn('/'), (req,res) => {
     res.render("chats.ejs");
 });
@@ -126,14 +130,17 @@ app.get("/editar", ensureLoggedIn('/'), (req,res) => {
     res.render("editprofile.ejs");
 });
 
+app.get("/pedirReadimicao", ensureLoggedIn('/'), (req,res) => {
+    res.render("pedirReadimicao.ejs");
+});
 
-app.post("/login",passport.authenticate("local", {
+app.post("/login", ensureLoggedOut('/'),passport.authenticate("local", {
         successRedirect: "/",
         failureRedirect: "/",
     })
 );
 
-app.post("/register", upload.single('imagemPerfil') ,function(req,res){
+app.post("/register", ensureLoggedOut('/'), upload.single('imagemPerfil') ,function(req,res){
     //New User in the DB
     UserController.UsernameTaken(db, req, function(result) {
         if(result.length !==0) {
@@ -203,7 +210,7 @@ app.post("/editar", upload.single('newImagemPerfil') ,function(req,res) {
 });
 
 
-app.post("/logout", (req, res) => {
+app.post("/logout", ensureLoggedIn('/'), (req, res) => {
     console.log(`logout ${req.session.id}`);
     const socketId = req.session.socketId;
     if (socketId && io.of("/").sockets.get(socketId)) {
@@ -215,7 +222,7 @@ app.post("/logout", (req, res) => {
     res.redirect("/");
 });
 
-app.post("/criarChat", function(req, res) {
+app.post("/criarChat", ensureLoggedIn('/'), function(req, res) {
     ChatController.ChatTaken(db,req,function (result){
         if(result.length!==0) {
             res.redirect('/criarChat');
@@ -226,14 +233,18 @@ app.post("/criarChat", function(req, res) {
             if(req.body.chatname==="")
                 var chatDB = '{ "nome":"' + date + '", "data":"' + date + '", "criador":"' + req.body.username + '", "participante":[ "';
             else
-                var chatDB = '{ "nome":"' + req.body.chatname + '", "data":"' + date + '", "criador":"' + req.body.username + '", "participante":[ "';
+                var chatDB = '{ "nome":"' + req.body.chatname + '", "data":"' + date + '", "criador":"' + req.body.username + '", "participante":[ "' + req.body.username + '", "';
             for(var i=0;i<req.body.numeroElementos;i++) {
-                if(req.body.numeroElementos==1)
-                    chatDB = chatDB + req.body.elementosChat;
+                if(req.body.numeroElementos==1){
+                    if (req.body.elementosChat!==req.body.username)
+                        chatDB = chatDB + req.body.elementosChat;
+                }
                 else{
-                    chatDB = chatDB + req.body.elementosChat[i];
-                    if (i + 1 < req.body.numeroElementos)
-                        chatDB = chatDB + '", "';
+                    if (req.body.elementosChat[i]!==req.body.username){
+                        chatDB = chatDB + req.body.elementosChat[i];
+                        if (i + 1 < req.body.numeroElementos)
+                            chatDB = chatDB + '", "';
+                    }
                 }
             }
             chatDB = chatDB + '" ], "regra":[ "';
@@ -248,7 +259,6 @@ app.post("/criarChat", function(req, res) {
                 }
             }
             chatDB = chatDB + '" ]}';
-            console.log(chatDB.substring(153,185));
             const instance = new Chat(JSON.parse(chatDB));
             instance.save(function (err, instance) {
                 if (err) return console.error(err);
@@ -285,13 +295,11 @@ app.post("/criarChat", function(req, res) {
 
 });
 
-var chatAcedido;
 app.post("/chatroom", ensureLoggedIn('/'), function(req,res) {
-    res.render('chatroom.ejs');
-    chatAcedido = req.body.chat;
+    res.render('chatroom.ejs'); //fazer verificacao se o user faz parte do chat
 })
 
-app.post("/pedidos", function (req,res){
+app.post("/pedidos", ensureLoggedIn('/'), function (req,res){
     if(req.body.resposta === "aceitar"){
         ChatController.Aceitar(db,req);
         res.redirect(307, '/login');
@@ -302,11 +310,28 @@ app.post("/pedidos", function (req,res){
     }
 })
 
+app.post("/readmitir", ensureLoggedIn('/'), function (req,res){
+    if(req.body.resposta === "aceitar"){
+        ChatController.aceitarReadmicao(db,req);
+        res.redirect(307, '/login');
+    }
+    else{
+        ChatController.rejeitarReadmicao(db,req);
+        res.redirect(307, '/login');
+    }
+})
+
 app.post("/sairChat", ensureLoggedIn('/'),function (req,res){
-    ChatController.sairChat(db, chatAcedido, req, (err)=>{
+    ChatController.sairChat(db, req, (err)=>{
         if (err) return console.error(err);
         res.redirect("/");
     });
+})
+
+app.post("/pedirReadmicao", ensureLoggedIn('/'), function (req,res){
+    ChatController.submeterReadmicao(db,req);
+    res.redirect(307, '/login');
+
 })
 
 passport.serializeUser((user, cb) => {
@@ -352,11 +377,27 @@ io.on('connect', (socket) => {
         })
     });
 
+    socket.on('pedidosReadmicao', (cb) => {
+        ChatController.pedidosReadmicao(db,socket,function (result){
+            cb(result);
+        })
+    });
+
+    socket.on('aceitar ou rejeitar readmicao', (cb) => {
+        ChatController.pedidosReadmicaoCriador(db,socket,function (result){
+            cb(result);
+        })
+    });
+
     socket.on('aceder', (cb) => {
         ChatController.ChatsDisponiveis(db,socket,function (result){
             cb(result);
         })
     });
+
+    socket.on("deleted messages", function (id){
+        ChatController.deletemsg(db, id);
+    })
 
     const session = socket.request.session;
     console.log(`saving sid ${socket.id} in session ${session.id}`);
@@ -372,7 +413,7 @@ io.on('connect', (socket) => {
     });
 
 
-    socket.on("mensagens guardadas", function(){
+    socket.on("mensagens guardadas", function(chatAcedido){
         ChatController.MensagensChat(db,chatAcedido,function (result){
 
             io.emit('send',result);
@@ -385,7 +426,7 @@ io.on('connect', (socket) => {
         });
     });
 
-    socket.on('chat message',function(msg) {
+    socket.on('chat message',function(msg,chatAcedido) {
         console.log('message: ' + msg);
         var mensagem = {msg: msg, id: socket.request.user.username};
         ChatController.getMsgId(db,0,(id)=>{

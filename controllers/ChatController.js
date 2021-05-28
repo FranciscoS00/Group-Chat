@@ -29,6 +29,31 @@ function Rejeitar(db,req){ //remover o user da base de dados com o nome e userna
         Chat.removePendentes(db,req.body.username,req.body.chatsPendentes);
 }
 
+function aceitarReadmicao(db,req){ //remover o user da base de dados com o nome e username e colocar em membroChats
+    if(Array.isArray(req.body.readmitir)){
+        for(var i=0;i<req.body.readmitir.length;i++){
+            Chat.colocarNoChatReadmitir(db,req.body.readmitir[i]);
+        }
+    }
+    else
+        Chat.colocarNoChatReadmitir(db,req.body.readmitir);
+    rejeitarReadmicao(db,req);
+}
+
+function rejeitarReadmicao(db,req){ //remover o user da base de dados com o nome e username
+    if(Array.isArray(req.body.readmitir)){
+        for(var i=0;i<req.body.readmitir.length;i++){
+            Chat.removeReadmitir(db,req.body.readmitir[i]);
+        }
+    }
+    else
+        Chat.removeReadmitir(db,req.body.readmitir);
+}
+
+function deletemsg(db,id ){
+    Chat.deletemsg(db, id);
+}
+
 function ChatsDisponiveis(db, socket, callback){
     Chat.pertenceConversa(db, socket.request.user.username, callback);
 }
@@ -45,8 +70,8 @@ function getMsgId(db,i,callback){
     })
 }
 
-function sairChat(db,chatAcedido,req,callback){
-    Chat.sairChat(db,chatAcedido,req.body.username,callback);
+function sairChat(db,req,callback){
+    Chat.sairChat(db,req.body.chat,req.body.username,callback);
 }
 
 function MensagensChat(db,pertence ,callback){
@@ -57,8 +82,28 @@ function imagemConversa(db, socket, callback){
     Chat.imagemConversa(db, socket.request.user.username, callback);
 }
 
-function ChangeNomeParticipante(db, req, callback){
-    Chat.ChangeUsernameParticipante(db,req.user.username, req.body.username,callback);
+function pedidosReadmicao(db,socket,callback){ //retorna todos os chats da base de dados na collection saiu com o username na socket
+    Chat.pedidosReadmicao(db,socket.request.user.username,callback);
+}
+
+function pedidosReadmicaoCriador(db,socket,callback){ //retorna todos os chats da base de dados na collection saiu com o username na socket
+    Chat.pedidosReadmicaoCriador(db,socket.request.user.username,callback);
+}
+
+function submeterReadmicao(db,req){ //remover o user da base de dados com o nome e username e colocar em por readmitir
+    if(Array.isArray(req.body.chatsReadmicao)){
+        for(var i=0;i<req.body.chatsReadmicao.length;i++){
+            Chat.colocarReadmicao(db,req.body.username,req.body.chatsReadmicao[i],()=>{
+                Chat.removeSaiu(db,req.body.username,req.body.chatsReadmicao[i]);
+            });
+
+        }
+
+    }
+    else{
+        Chat.colocarReadmicao(db,req.body.username,req.body.chatsReadmicao);
+        Chat.removeSaiu(db,req.body.username,req.body.chatsReadmicao);
+    }
 }
 
 module.exports = {
@@ -71,5 +116,10 @@ module.exports = {
     imagemConversa,
     MensagensChat,
     sairChat,
-    ChangeNomeParticipante
+    pedidosReadmicao,
+    pedidosReadmicaoCriador,
+    submeterReadmicao,
+    rejeitarReadmicao,
+    deletemsg,
+    aceitarReadmicao
 };

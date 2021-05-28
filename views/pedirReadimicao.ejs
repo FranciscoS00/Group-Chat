@@ -38,10 +38,10 @@
 
     </div>
 </div>
-<form action="/pedidos" method="post">
+<form action="/pedirReadmicao" method="post">
     <input type="text" name="username" id="usernameID" hidden>
     <div id="escolherChat"></div>
-    <div id="aceitar ou rejeitar"></div>
+    <div id="pedir readmicao"></div>
 </form>
 
 
@@ -54,25 +54,19 @@
                 chatPendente.innerText = chats[i].nome;
                 document.getElementById("escolherChat").appendChild(chatPendente);
                 var chatPendente = document.createElement("input");
-                chatPendente.setAttribute("name","chatsPendentes");
+                chatPendente.setAttribute("name","chatsReadmicao");
                 chatPendente.setAttribute("value",chats[i].nome);
                 chatPendente.setAttribute("type","checkbox");
                 document.getElementById(i).appendChild(chatPendente);
             }
             var chatPendente = document.createElement("input");
-            chatPendente.setAttribute("name","resposta");
-            chatPendente.setAttribute("value","aceitar");
+            chatPendente.setAttribute("value","Pedir Readmicao");
             chatPendente.setAttribute("type","submit");
-            document.getElementById("aceitar ou rejeitar").appendChild(chatPendente);
-            var chatPendente = document.createElement("input");
-            chatPendente.setAttribute("name","resposta");
-            chatPendente.setAttribute("value","rejeitar");
-            chatPendente.setAttribute("type","submit");
-            document.getElementById("aceitar ou rejeitar").appendChild(chatPendente);
+            document.getElementById("pedir readmicao").appendChild(chatPendente);
         }
         else{
             var chatPendente = document.createElement("p");
-            chatPendente.innerText = "Não tem nenhum chat pendente";
+            chatPendente.innerText = "Não saiu de nenhum chat";
             document.getElementById("escolherChat").appendChild(chatPendente);
         }
     }
@@ -95,7 +89,7 @@
             document.getElementById('imagem').appendChild(img);
         });
 
-        socket.emit('pendentes', (chats) => {
+        socket.emit('pedidosReadmicao', (chats) => {
             chatsToCheckbox(chats);
         });
     });

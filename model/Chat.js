@@ -18,6 +18,24 @@ function getPendentes(db,username,callback){
     });
 }
 
+function pedidosReadmicao(db,username,callback){
+    var filters = { };
+
+    if(username !== undefined) filters.username = username;
+    db.collection('saiu').find(filters).toArray(function(err,result){
+        callback(result);
+    });
+}
+
+function pedidosReadmicaoCriador(db,username,callback){
+    var filters = { };
+
+    if(username !== undefined) filters.criador = username;
+    db.collection('readmitir').find(filters).toArray(function(err,result){
+        callback(result);
+    });
+}
+
 function pertenceConversa(db, username, callback){
     var filters = {};
     if(username !== undefined) filters.username = username;
@@ -32,9 +50,15 @@ function removePendentes(db,username,nome){
     }
 }
 
+function removeSaiu(db,username,nome){
+    if(username!==undefined && nome!==undefined) {
+        db.collection('saiu').remove({username: username, nome: nome});
+    }
+}
+
 function sairChat(db,chatAcedido,username,callback){
     if(chatAcedido!==undefined && username!==undefined) {
-        db.collection('membroschats').remove({username: username, nome: chatAcedido});
+        db.collection('membrochats').remove({username: username, nome: chatAcedido});
         db.collection('saiu').insertOne({username: username, nome: chatAcedido},(error,result)=>{
             callback(error);
         });
@@ -69,13 +93,42 @@ function colocarNoChat(db,username,nome){
     }
 }
 
-function MensagemPertence(db,id,callback){
-    var filters = { };
+function colocarReadmicao(db,username,nome){
+    if(username!==undefined && nome!==undefined) {
+        var filters = { };
+        filters.nome = nome;
+        filters.participante = username;
+        db.collection('chats').find(filters).toArray(function(err,result){
+            if(err) return console.error(err);
+            db.collection('readmitir').insertOne({username: username, nome: nome, criador: result[0].criador});
+        });
 
-    if(id !== undefined) filters.pertence = id;
-    db.collection('mensagens').find(filters).toArray(function(err,result){
-        callback(result);
-    });
+    }
+}
+
+function colocarNoChatReadmitir(db,pessoas){
+    if(pessoas!==undefined) {
+        var filters = { };
+        var newStuff=pessoas.split(",");
+        var username=newStuff[1].split("]");
+        var chat=newStuff[0].split("[");
+        filters.nome = chat[1];
+        filters.participante=username[0];
+        db.collection('chats').find(filters).toArray(function(err,result){
+            if(err) return console.error(err);
+            db.collection('membrochats').insertOne({username: username[0], nome: chat[1], criador: result[0].criador});
+        });
+
+    }
+}
+
+function removeReadmitir(db,pessoas){
+    if(pessoas!==undefined) {
+        var newStuff=pessoas.split(",");
+        var username=newStuff[1].split("]");
+        var chat=newStuff[0].split("[");
+        db.collection('readmitir').remove({username:username[0],nome:chat[1]});
+    }
 }
 
 function ChangeUsernameParticipante(db, username, newUsername, callback){
@@ -120,16 +173,38 @@ function ChangeUsernameParticipante(db, username, newUsername, callback){
 
 }
 
+function MensagemPertence(db,id,callback){
+    var filters = { };
+
+    if(id !== undefined) filters.pertence = id;
+    db.collection('mensagens').find(filters).toArray(function(err,result){
+        callback(result);
+    });
+}
+
+function deletemsg(db,id){
+    if (id!==undefined){
+        var variavelx=parseInt(id);
+        db.collection('mensagens').remove({id:variavelx});
+    }
+}
+
 
 module.exports = {
     getChat,
     getPendentes,
+    pedidosReadmicao,
     removePendentes,
     colocarNoChat,
     pertenceConversa,
     MensagemPertence,
     imagemConversa,
     getMsgId,
+    colocarReadmicao,
+    pedidosReadmicaoCriador,
+    removeSaiu,
+    colocarNoChatReadmitir,
     sairChat,
-    ChangeUsernameParticipante
+    removeReadmitir,
+    deletemsg
 }

@@ -40,7 +40,7 @@
         </div>
         <div class="right">
             <form id="aceder" method="get" action="/aceder"><button value="aceder" type="submit" ><i class="material-icons">groups</i></button></form>
-            <form id="sairChat" method="post" action="/sairChat"><button id="buttonSairChat" type="submit" ><i class="material-icons">groups</i></button><input id="usernames" name="username" hidden></form>
+            <form id="sairChat" method="post" action="/sairChat"><button id="buttonSairChat" name="chat" type="submit" ><i class="material-icons">groups</i></button><input id="usernames" name="username" hidden></form>
             <form id="logout" method="post" action="/logout"><button value="Log out" type="submit"><i class="material-icons">logout</i></button></form>
 
         </div>
@@ -78,16 +78,19 @@
 
                     //We don't need to pass the name, it will be obtained from the session
                     socket.emit("join");
-                    socket.emit("mensagens guardadas");
+                    socket.emit("mensagens guardadas",decodestr());
 
                     $('#message').submit(function () {
-                        socket.emit('chat message', $('#m').val());
+                        socket.emit('chat message', $('#m').val(),decodestr());
                         console.log($('#m').val());
                         $('#m').val('');
                         return false;
                     });
                     socket.on('chat message', function (msg) {
-                        $('#messages').append('<div class="message sent">' +  ' ' + (msg.id + ": " + msg.msg) + '<form><button><i class="material-icons">delete</i></button></form></div>');
+                        $('#messages').append('<div class="message sent">' +  ' ' + (msg.id + ": " + msg.msg) + '<form><button id="msgid"><i class="material-icons">delete</i></button></form></div>');
+                        document.getElementById("msgid").setAttribute("value",msg.msgId);
+                        document.getElementById("msgid").setAttribute("id",msg.msgId);
+                        document.getElementById(msg.msgId).addEventListener("click",deletemsg);
                         scrollDown()
                     });
 
@@ -103,13 +106,26 @@
                             if (result[i].username === usernameSpan.innerText) {
                                 var y=document.createElement('div');
                                 y.setAttribute('class','message sent');
-                                y.innerText = result[i].username + ":" + result[i].conteudo;
+                                y.setAttribute('id',"m"+result[i].id);
+                                y.innerText = result[i].username + ": " + result[i].conteudo;
+                                var f=document.createElement('form');
+                                f.setAttribute('id',"f"+result[i].id);
+                                var b=document.createElement('button');
+                                b.setAttribute('value',result[i].id);
+                                b.setAttribute('id',result[i].id);
+                                var ix=document.createElement('i');
+                                ix.setAttribute('class',"material-icons");
+                                ix.innerHTML='delete';
                                 document.getElementById('messages').appendChild(y);
+                                document.getElementById("m"+result[i].id).appendChild(f);
+                                document.getElementById("f"+result[i].id).appendChild(b);
+                                document.getElementById(result[i].id).appendChild(ix);
+                                document.getElementById(result[i].id).addEventListener("click",deletemsg);
 
                             }else{
                                 var y=document.createElement('div');
                                 y.setAttribute('class','message received');
-                                y.innerText = result[i].username + ":" + result[i].conteudo;
+                                y.innerText = result[i].username + ": " + result[i].conteudo;
                                 document.getElementById('messages').appendChild(y);
                             }
                         }
@@ -145,6 +161,7 @@
     const socket = io();
     const usernameSpan = document.getElementById("username");
     const chatsSpan =document.getElementById("chats").innerText=decodestr();
+    document.getElementById("buttonSairChat").setAttribute("value",decodestr());
 
     function decodestr() {
         var uri = window.location.href;
@@ -178,5 +195,8 @@
             document.getElementById('imagem').appendChild(img);
         });
     });
+    function deletemsg(e){
+        socket.emit('deleted messages', this.id);
+    }
 </script>
 </html>

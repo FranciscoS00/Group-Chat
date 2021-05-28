@@ -33,33 +33,33 @@
     </div>
 </div>
 <form id="form1" class="formlogin" action="/editar" method="post" enctype="multipart/form-data">
-<div class="editpag">
-    <div class="editaux">
-        <div class="profpic2" id="imagem" ></div>
-    </div>
-    <div class="overlayimg" id="newimage" >
+    <div class="editpag">
+        <div class="editaux">
+            <div class="profpic2" id="imagem" ></div>
+        </div>
+        <div class="overlayimg" id="newimage" >
 
             <input type="file" name="newImagemPerfil">Change image<i class="material-icons">add_photo_alternate</i></div>
-</div>
+    </div>
 
-<div class="formcontainer3">
-<div class="formlogin">
-        <div class="formpart">
-            <label><i class="material-icons">person</i> Novo Username:</label>
-            <input type="text" name="username" placeholder="Username">
-            <br/>
-        </div>
-        <div class="formpart">
-            <label><i class="material-icons">vpn_key</i> Nova Password:</label>
-            <input type="password" name="newPassword" placeholder="Password">
-        </div>
+    <div class="formcontainer3">
+        <div class="formlogin">
+            <div class="formpart">
+                <label><i class="material-icons">person</i> Novo Username:</label>
+                <input type="text" name="username" placeholder="Username">
+                <br/>
+            </div>
+            <div class="formpart">
+                <label><i class="material-icons">vpn_key</i> Nova Password:</label>
+                <input type="password" name="newPassword" placeholder="Password">
+            </div>
 
-        <div class="formpart">
-            <button type="submit" value="Submit">Submit</button>
-        </div>
+            <div class="formpart">
+                <button type="submit" value="Submit">Submit</button>
+            </div>
 
-</div>
-</div>
+        </div>
+    </div>
 </form>
 <script>
     const socket = io();
@@ -96,8 +96,5 @@
     });
 
 
-    function openFE() {
-        socket.emit('fileexplorer');
-    }
 </script>
 </body>
