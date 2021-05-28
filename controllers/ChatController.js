@@ -57,6 +57,10 @@ function imagemConversa(db, socket, callback){
     Chat.imagemConversa(db, socket.request.user.username, callback);
 }
 
+function ChangeNomeParticipante(db, req, callback){
+    Chat.ChangeUsernameParticipante(db,req.user.username, req.body.username,callback);
+}
+
 module.exports = {
     ChatTaken,
     Pendentes,
@@ -66,5 +70,6 @@ module.exports = {
     getMsgId,
     imagemConversa,
     MensagensChat,
-    sairChat
+    sairChat,
+    ChangeNomeParticipante
 };

@@ -15,9 +15,12 @@ function ChangeImage(db, req, callback){
     User.ChangeImage(db,req.user.imagem, req.file.filename,callback);
 }
 
+
+
 module.exports = {
     UsernameTaken,
     ChangeUsername,
     ChangePassword,
-    ChangeImage
+    ChangeImage,
+
 };

@@ -172,10 +172,16 @@ app.post("/editar", upload.single('newImagemPerfil') ,function(req,res) {
             UserController.ChangeUsername(db, req, function (err, result) {
                 if (err) return console.error(err);
             });
+            ChatController.ChangeNomeParticipante(db, req, function(err, result){
+                if (err) return console.error(err);
+            });
         }
         if (result.length !== 0) {
             if (req.body.username !== "" && result[0].username !== req.body.username) {
                 UserController.ChangeUsername(db, req, function (err, result) {
+                    if (err) return console.error(err);
+                });
+                ChatController.ChangeNomeParticipante(db, req, function(err, result){
                     if (err) return console.error(err);
                 });
             }
