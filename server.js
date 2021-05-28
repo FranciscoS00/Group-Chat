@@ -166,12 +166,19 @@ app.post("/register", upload.single('imagemPerfil') ,function(req,res){
 });
 
 
-app.post("/editar", upload.single('newImagemPerfil') ,function(req,res){
-    UserController.UsernameTaken(db, req, function(result) {
-        if (req.body.username !== "") {
+app.post("/editar", upload.single('newImagemPerfil') ,function(req,res) {
+    UserController.UsernameTaken(db, req, function (result) {
+        if (req.body.username !== "" && result.length === 0) {
             UserController.ChangeUsername(db, req, function (err, result) {
                 if (err) return console.error(err);
             });
+        }
+        if (result.length !== 0) {
+            if (req.body.username !== "" && result[0].username !== req.body.username) {
+                UserController.ChangeUsername(db, req, function (err, result) {
+                    if (err) return console.error(err);
+                });
+            }
         }
     });
 
