@@ -106,6 +106,10 @@ function submeterReadmicao(db,req){ //remover o user da base de dados com o nome
     }
 }
 
+function ChangeNomeParticipante(db, req, callback){
+    Chat.ChangeUsernameParticipante(db,req.user.username, req.body.username,callback);
+}
+
 module.exports = {
     ChatTaken,
     Pendentes,
@@ -121,5 +125,6 @@ module.exports = {
     submeterReadmicao,
     rejeitarReadmicao,
     deletemsg,
-    aceitarReadmicao
+    aceitarReadmicao,
+    ChangeNomeParticipante
 };

@@ -173,6 +173,8 @@ function ChangeUsernameParticipante(db, username, newUsername, callback){
 
 }
 
+
+
 function MensagemPertence(db,id,callback){
     var filters = { };
 
@@ -206,5 +208,6 @@ module.exports = {
     colocarNoChatReadmitir,
     sairChat,
     removeReadmitir,
-    deletemsg
+    deletemsg,
+    ChangeUsernameParticipante
 }

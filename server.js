@@ -408,7 +408,6 @@ io.on('connect', (socket) => {
     //Chat
     socket.on("join", function(){
         console.log(socket.request.user.username+" joined server");
-        alert(socket.request.user.username+" has joined the server");
         io.emit("update", socket.request.user.username + " has joined the server.");
     });
 
