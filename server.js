@@ -141,6 +141,10 @@ app.post("/login", ensureLoggedOut('/'),passport.authenticate("local", {
     })
 );
 
+app.post("/editar", ensureLoggedIn('/'), (req,res) => {
+    res.render("editprofile.ejs");
+});
+
 app.post("/register", ensureLoggedOut('/'), upload.single('imagemPerfil') ,function(req,res){
     //New User in the DB
     UserController.UsernameTaken(db, req, function(result) {
@@ -327,6 +331,17 @@ app.post("/sairChat", ensureLoggedIn('/'),function (req,res){
         if (err) return console.error(err);
         res.redirect("/");
     });
+})
+
+app.get("/chatName", ensureLoggedIn('/'), function(req, res){
+    res.render('nomeChat.ejs');
+})
+
+app.post("/chatName", ensureLoggedIn('/'), function(req, res) {
+    ChatController.changeChatName(db, req, function (err, result) {
+        if (err) return console.error(err);
+    })
+    res.redirect('/');
 })
 
 app.post("/pedirReadmicao", ensureLoggedIn('/'), function (req,res){

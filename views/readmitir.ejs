@@ -38,7 +38,7 @@
 
     </div>
 </div>
-<form action="/readmitir" method="post">
+<form class="formcontainer2" action="/readmitir" method="post">
     <input type="text" name="username" id="usernameID" hidden>
     <div id="escolherChat"></div>
     <div id="aceitar ou rejeitar"></div>
@@ -55,6 +55,7 @@
                 document.getElementById("escolherChat").appendChild(readmitir);
                 var readmitir = document.createElement("input");
                 readmitir.setAttribute("name","readmitir");
+                readmitir.setAttribute("class","formpart2");
                 readmitir.setAttribute("value","["+chats[i].nome+","+chats[i].username+"]");
                 readmitir.setAttribute("type","checkbox");
                 document.getElementById(i).appendChild(readmitir);
@@ -62,17 +63,20 @@
             var readmitir = document.createElement("input");
             readmitir.setAttribute("name","resposta");
             readmitir.setAttribute("value","aceitar");
+            readmitir.setAttribute("class","formpart2");
             readmitir.setAttribute("type","submit");
             document.getElementById("aceitar ou rejeitar").appendChild(readmitir);
             var readmitir = document.createElement("input");
             readmitir.setAttribute("name","resposta");
             readmitir.setAttribute("value","rejeitar");
+            readmitir.setAttribute("class","formpart2");
             readmitir.setAttribute("type","submit");
             document.getElementById("aceitar ou rejeitar").appendChild(readmitir);
         }
         else{
             var readmitir = document.createElement("p");
             readmitir.innerText = "Não tem nenhum chat pendente";
+            readmitir.setAttribute("class","formpart2");
             document.getElementById("escolherChat").appendChild(readmitir);
         }
     }

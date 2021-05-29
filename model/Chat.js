@@ -193,11 +193,26 @@ function deletemsg(db,id){
 
 function mudarNomeChat(db, antigo, novo, callback){
     var filters = {};
+    var antigoArray = {};
     var novoArray = {};
-    if(antigo !== undefined) filters.nome = antigo;
-    if(novo !== undefined)  novoArray.antigos = novo;
-    db.collection('chats').updateOne(filters, {$push: novoArray})
-    db.collection('chats').updateOne(filters,{$set: novo} )
+    var pertenceArray = {};
+    var pertenceAntigo = {};
+    if(antigo !== undefined){
+        filters.nome = antigo;
+        antigoArray.antigos = antigo;
+        pertenceAntigo.pertence = antigo;
+    }
+    if(novo !== undefined){
+        novoArray.nome = novo;
+        pertenceArray.pertence = novo;
+    }
+    db.collection('chats').updateOne(filters, {$push: antigoArray})
+    db.collection('membrochats').updateMany(filters, {$set: novoArray})
+    db.collection('pendentes').updateMany(filters, {$set: novoArray})
+    db.collection('readmitir').updateMany(filters, {$set: novoArray})
+    db.collection('mensagens').updateMany(pertenceAntigo, {$set: pertenceArray})
+    db.collection('saiu').updateMany(filters, {$set: novoArray})
+    db.collection('chats').updateOne(filters,{$set: novoArray} )
 
 }
 

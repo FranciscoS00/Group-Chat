@@ -111,7 +111,7 @@ function ChangeNomeParticipante(db, req, callback){
 }
 
 function changeChatName(db, req, callback){
-    Chat.mudarNomeChat(db, req.body.antigo, req.body.novoNome,callback)
+    Chat.mudarNomeChat(db, req.body.antigo, req.body.novoNome, callback)
 }
 
 module.exports = {

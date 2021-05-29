@@ -38,7 +38,7 @@
 
     </div>
 </div>
-<form action="/pedidos" method="post">
+<form class="formcontainer2" action="/pedidos" method="post">
     <input type="text" name="username" id="usernameID" hidden>
     <div id="escolherChat"></div>
     <div id="aceitar ou rejeitar"></div>
@@ -51,27 +51,32 @@
             for(var i=0;i<chats.length;i++){
                 var chatPendente = document.createElement("p");
                 chatPendente.setAttribute("id",i);
+                chatPendente.setAttribute("class","formpart2");
                 chatPendente.innerText = chats[i].nome;
                 document.getElementById("escolherChat").appendChild(chatPendente);
                 var chatPendente = document.createElement("input");
                 chatPendente.setAttribute("name","chatsPendentes");
                 chatPendente.setAttribute("value",chats[i].nome);
                 chatPendente.setAttribute("type","checkbox");
+                chatPendente.setAttribute("class","formpart2");
                 document.getElementById(i).appendChild(chatPendente);
             }
             var chatPendente = document.createElement("input");
             chatPendente.setAttribute("name","resposta");
             chatPendente.setAttribute("value","aceitar");
             chatPendente.setAttribute("type","submit");
+            chatPendente.setAttribute("class","formpart2");
             document.getElementById("aceitar ou rejeitar").appendChild(chatPendente);
             var chatPendente = document.createElement("input");
             chatPendente.setAttribute("name","resposta");
+            chatPendente.setAttribute("class","formpart2");
             chatPendente.setAttribute("value","rejeitar");
             chatPendente.setAttribute("type","submit");
             document.getElementById("aceitar ou rejeitar").appendChild(chatPendente);
         }
         else{
             var chatPendente = document.createElement("p");
+            chatPendente.setAttribute("class","formpart2");
             chatPendente.innerText = "Não tem nenhum chat pendente";
             document.getElementById("escolherChat").appendChild(chatPendente);
         }
