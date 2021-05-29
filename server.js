@@ -44,7 +44,8 @@ const chatSchema = new mongoose.Schema({
     regra: Array,
     participante: Array,
     data: Date,
-    nome: String
+    nome: String,
+    antigos: Array
 });
 
 const msgSchema = new mongoose.Schema({

@@ -191,6 +191,16 @@ function deletemsg(db,id){
     }
 }
 
+function mudarNomeChat(db, antigo, novo, callback){
+    var filters = {};
+    var novoArray = {};
+    if(antigo !== undefined) filters.nome = antigo;
+    if(novo !== undefined)  novoArray.antigos = novo;
+    db.collection('chats').updateOne(filters, {$push: novoArray})
+    db.collection('chats').updateOne(filters,{$set: novo} )
+
+}
+
 
 module.exports = {
     getChat,
@@ -209,5 +219,6 @@ module.exports = {
     sairChat,
     removeReadmitir,
     deletemsg,
-    ChangeUsernameParticipante
+    ChangeUsernameParticipante,
+    mudarNomeChat
 }

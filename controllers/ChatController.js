@@ -110,6 +110,10 @@ function ChangeNomeParticipante(db, req, callback){
     Chat.ChangeUsernameParticipante(db,req.user.username, req.body.username,callback);
 }
 
+function changeChatName(db, req, callback){
+    Chat.mudarNomeChat(db, req.body.antigo, req.body.novoNome,callback)
+}
+
 module.exports = {
     ChatTaken,
     Pendentes,
@@ -126,5 +130,6 @@ module.exports = {
     rejeitarReadmicao,
     deletemsg,
     aceitarReadmicao,
-    ChangeNomeParticipante
+    ChangeNomeParticipante,
+    changeChatName
 };
