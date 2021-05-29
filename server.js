@@ -141,10 +141,6 @@ app.post("/login", ensureLoggedOut('/'),passport.authenticate("local", {
     })
 );
 
-app.post("/editar", ensureLoggedIn('/'), (req,res) => {
-    res.render("editprofile.ejs");
-});
-
 app.post("/register", ensureLoggedOut('/'), upload.single('imagemPerfil') ,function(req,res){
     //New User in the DB
     UserController.UsernameTaken(db, req, function(result) {
@@ -415,6 +411,22 @@ io.on('connect', (socket) => {
         ChatController.deletemsg(db, id);
     })
 
+
+    //----------------------------------------------------------------------------------
+    socket.on("editar messages", function (id,newMsg,oldMsg){
+        ChatController.editarMensagem(db, id,newMsg,oldMsg);
+        io.emit('editar messages');
+    })
+
+    socket.on('mensagem para editar',(id)=>{
+        ChatController.procuraMensagem(db,id,(msg)=>{
+            io.emit('mensagem para editar',msg[0]);
+        });
+    });
+
+
+
+
     const session = socket.request.session;
     console.log(`saving sid ${socket.id} in session ${session.id}`);
     session.socketId = socket.id;
@@ -441,23 +453,24 @@ io.on('connect', (socket) => {
         });
     });
 
-    socket.on('chat message',function(msg,chatAcedido) {
-        console.log('message: ' + msg);
-        ChatController.getMsgId(db,0,(id)=>{
-            var mensagem = {msg: msg, id: socket.request.user.username, msgId:id};
-            let saveMSG = new Msg({
-                username: socket.request.user.username,
-                conteudo: msg,
-                id: id,
-                data: Date.now(),
-                pertence: chatAcedido
-            })
-            saveMSG.save(function (err, instance) {
-                if (err) return console.error(err);
-                io.emit('chat message', mensagem);
-            })
-        });
-
+    socket.on('chat message',function(msg,chatAcedido,edit) {
+        if(edit!="true"){
+            console.log('message: ' + msg);
+            ChatController.getMsgId(db,0,(id)=>{
+                var mensagem = {msg: msg, id: socket.request.user.username, msgId:id};
+                let saveMSG = new Msg({
+                    username: socket.request.user.username,
+                    conteudo: msg,
+                    id: id,
+                    data: Date.now(),
+                    pertence: chatAcedido
+                })
+                saveMSG.save(function (err, instance) {
+                    if (err) return console.error(err);
+                    io.emit('chat message', mensagem);
+                })
+            });
+        }
     })
 
 });

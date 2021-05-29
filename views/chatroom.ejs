@@ -82,17 +82,31 @@
                     socket.emit("mensagens guardadas",decodestr());
 
                     $('#message').submit(function () {
-                        socket.emit('chat message', $('#m').val(),decodestr());
+                        socket.emit('chat message', $('#m').val(),decodestr(),Edit());
                         console.log($('#m').val());
                         $('#m').val('');
                         return false;
                     });
+
                     socket.on('chat message', function (msg) {
-                        $('#messages').append('<div class="message sent">' +  ' ' + (msg.id + ": " + msg.msg) + '<form action="/chatroom" method="get"><input name="x" id="inputID" hidden="true"><button id="msgid"><i class="material-icons">delete</i></button></form></div>');
+                        $('#messages').append('<div class="message sent">' +  ' ' + (msg.id + ": " + msg.msg) +
+                            '<div class="flex"> <form action="/chatroom" method="get"><input name="x" id="inputID" hidden="true"><button id="msgid"><i class="material-icons">delete</i></button></form>' +
+                            '<form action="/chatroom" method="get"><input name="x" id="inputID2" hidden="true"><input name="edit" value="true" hidden="true"><input name="editMessageId" id="temp" hidden="true"><button id="msgid2"><i class="material-icons">mode</i></button></form></div></div>');
                         document.getElementById("msgid").setAttribute("value",msg.msgId);
                         document.getElementById("msgid").setAttribute("id",msg.msgId);
+
+                        document.getElementById("msgid2").setAttribute("value",msg.msgId);
+                        document.getElementById("msgid2").setAttribute("id","msgid"+msg.msgId);
+
                         document.getElementById("inputID").setAttribute("value",decodestr());
-                        document.getElementById("inputID").setAttribute("id",msg.msgID+"i");
+                        document.getElementById("inputID").setAttribute("id",msg.msgId+"i");
+
+                        document.getElementById("temp").setAttribute("value",msg.msgId);
+                        document.getElementById("temp").setAttribute("id","t"+msg.msgId);
+
+                        document.getElementById("inputID2").setAttribute("value",decodestr());
+                        document.getElementById("inputID2").setAttribute("id","B"+msg.msgId+"i");
+
                         document.getElementById(msg.msgId).addEventListener("click",deletemsg);
                         scrollDown()
                     });
@@ -107,30 +121,79 @@
                         document.getElementsByClassName("message received").remove();
                         for(let i =0; i<result.length; i++){
                             if (result[i].username === usernameSpan.innerText) {
+
                                 var y=document.createElement('div');
                                 y.setAttribute('class','message sent');
                                 y.setAttribute('id',"m"+result[i].id);
                                 y.innerText = result[i].username + ": " + result[i].conteudo;
+
+                                var j=document.createElement('div');
+                                j.setAttribute('class',"flex");
+                                j.setAttribute('id',"flex"+result[i].id);
                                 var f=document.createElement('form');
+
                                 f.setAttribute('id',"f"+result[i].id);
                                 f.setAttribute('method',"get");
                                 f.setAttribute('action',"/chatroom");
+
                                 var inputs=document.createElement('input');
                                 inputs.setAttribute("value",decodestr());
                                 inputs.setAttribute("name","x");
                                 inputs.setAttribute("hidden","true");
+
                                 var b=document.createElement('button');
                                 b.setAttribute('value',result[i].id);
                                 b.setAttribute('id',result[i].id);
+
                                 var ix=document.createElement('i');
                                 ix.setAttribute('class',"material-icons");
                                 ix.innerHTML='delete';
+
+                                var f2=document.createElement('form');
+                                f2.setAttribute('id',"fb"+result[i].id);
+                                f2.setAttribute('method',"get");
+                                f2.setAttribute('action',"/chatroom");
+
+                                var input2=document.createElement('input');
+                                input2.setAttribute("value",decodestr());
+                                input2.setAttribute("name","x");
+                                input2.setAttribute("hidden","true");
+
+                                var inputEdit=document.createElement('input');
+                                inputEdit.setAttribute("value","true");
+                                inputEdit.setAttribute("name","edit");
+                                inputEdit.setAttribute("hidden","true");
+
+                                var inputEditMessageId=document.createElement('input');
+                                inputEditMessageId.setAttribute("value",result[i].id);
+                                inputEditMessageId.setAttribute("name","editMessageId");
+                                inputEditMessageId.setAttribute("hidden","true");
+
+                                var b2=document.createElement('button');
+                                b2.setAttribute('value',result[i].id);
+                                b2.setAttribute('id',"bb"+result[i].id);
+
+                                var iy=document.createElement('i');
+                                iy.setAttribute('class',"material-icons");
+                                iy.innerHTML='mode';
+
+
                                 document.getElementById('messages').appendChild(y);
-                                document.getElementById("m"+result[i].id).appendChild(f);
+
+                                document.getElementById("m"+result[i].id).appendChild(j)
+                                document.getElementById("flex"+result[i].id).appendChild(f);
                                 document.getElementById("f"+result[i].id).appendChild(b);
                                 document.getElementById("f"+result[i].id).appendChild(inputs);
                                 document.getElementById(result[i].id).appendChild(ix);
                                 document.getElementById(result[i].id).addEventListener("click",deletemsg);
+
+                                document.getElementById("flex"+result[i].id).appendChild(f2);
+                                document.getElementById("fb"+result[i].id).appendChild(b2);
+                                document.getElementById("fb"+result[i].id).appendChild(input2);
+                                document.getElementById("fb"+result[i].id).appendChild(inputEdit);
+                                document.getElementById("fb"+result[i].id).appendChild(inputEditMessageId);
+                                document.getElementById("bb"+result[i].id).appendChild(iy);
+                                document.getElementById(result[i].id).addEventListener("click",editmsg);
 
                             }else{
                                 var y=document.createElement('div');
@@ -139,8 +202,14 @@
                                 document.getElementById('messages').appendChild(y);
                             }
                         }
+                        edit();
                         scrollDown();
-                    })
+                    });
+
+                    socket.on('editar messages', function(msg){
+                        document.getElementById("sendB").setAttribute("value",msg.msg);
+                    });
+
 
                 });
 
@@ -151,13 +220,13 @@
             <div class="emoji">
                 <i class="material-icons">mood</i>
             </div>
-            <input class="input-msg" name="form" placeholder="Send a message" autocomplete="off" autofocus id="m"></input>
+            <input type="text" class="input-msg" name="textInput" placeholder="Send a message"  autocomplete="off" id="m" >
 
             <div class="photo">
                 <i class="material-icons">image</i>
             </div>
 
-            <button class="send">
+            <button class="send" id="sendB">
                 <div class="circle">
                     <i class="material-icons">send</i>
                 </div>
@@ -205,8 +274,47 @@
             document.getElementById('imagem').appendChild(img);
         });
     });
+
+    socket.on('mensagem para editar',(msg)=>{
+        document.getElementById("m").setAttribute("value",msg.conteudo);
+        var button=document.getElementById("sendB");
+        var oldText=msg.conteudo
+        button.onclick=function(e){
+            var newText=document.getElementById("m").value;
+            socket.emit('editar messages', msg.id,newText,oldText);
+        }
+
+    })
+
+    socket.on('editar messages', ()=>{
+
+        var queryParams = new URLSearchParams(window.location.search);
+        queryParams.set("edit", "false");
+        history.replaceState(null, null, "?"+queryParams.toString());
+        location.reload();
+    });
+
+    function editmsg(e){
+        socket.emit('editar messages', this.id);
+    }
     function deletemsg(e){
         socket.emit('deleted messages', this.id);
+    }
+
+    function edit(){
+        var uri = window.location.href;
+        var url = new URL(uri);
+        var edit = url.searchParams.get("edit");
+        if(edit=="true"){
+            document.getElementById("message").setAttribute("id","editMsg");
+            socket.emit('mensagem para editar',url.searchParams.get("editMessageId"));
+        }
+    }
+
+    function Edit(){
+        var uri = window.location.href;
+        var url = new URL(uri);
+        return url.searchParams.get("edit");
     }
 </script>
 </html>

@@ -117,6 +117,7 @@ function colocarNoChatReadmitir(db,pessoas){
         db.collection('chats').find(filters).toArray(function(err,result){
             if(err) return console.error(err);
             db.collection('membrochats').insertOne({username: username[0], nome: chat[1], criador: result[0].criador});
+            removeReadmitir(db,pessoas);
         });
 
     }
@@ -184,6 +185,18 @@ function MensagemPertence(db,id,callback){
     });
 }
 
+function procuraMensagem(db,id, callback){
+    var filters = { };
+    if(id !== undefined){
+        var Id=parseInt(id);
+        filters.id=Id;
+    }
+
+    db.collection('mensagens').find(filters).toArray(function (err,res){
+        callback(res);
+    });
+}
+
 function deletemsg(db,id, callback){
     if (id!==undefined){
         var variavelx=parseInt(id);
@@ -217,6 +230,25 @@ function mudarNomeChat(db, antigo, novo, callback){
 }
 
 
+
+
+//-----------------------------------------------------------
+
+function editarMensagem(db, id, newMsg, oldMsg){
+    var filters = {};
+    var novo = {};
+    var antigoMsg = {};
+
+    if(oldMsg !== undefined && newMsg !== undefined){
+        antigoMsg.old = oldMsg;
+        filters.id = id;
+        novo.conteudo = newMsg;
+    }
+    db.collection('mensagens').updateOne(filters, {$push: antigoMsg})
+    db.collection('mensagens').updateOne(filters, {$set: novo})
+}
+
+
 module.exports = {
     getChat,
     getPendentes,
@@ -235,5 +267,7 @@ module.exports = {
     removeReadmitir,
     deletemsg,
     ChangeUsernameParticipante,
-    mudarNomeChat
+    mudarNomeChat,
+    editarMensagem,
+    procuraMensagem
 }

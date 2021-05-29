@@ -37,7 +37,6 @@ function aceitarReadmicao(db,req){ //remover o user da base de dados com o nome 
     }
     else
         Chat.colocarNoChatReadmitir(db,req.body.readmitir);
-    rejeitarReadmicao(db,req);
 }
 
 function rejeitarReadmicao(db,req){ //remover o user da base de dados com o nome e username
@@ -114,6 +113,20 @@ function changeChatName(db, req, callback){
     Chat.mudarNomeChat(db, req.body.antigo, req.body.novoNome, callback)
 }
 
+
+
+function procuraMensagem(db,id,callback){
+    Chat.procuraMensagem(db,id,callback);
+}
+
+//--------------------------------------------------
+
+function editarMensagem(db, id, newMsg,oldMsg){
+    Chat.editarMensagem(db,id,newMsg,oldMsg);
+}
+
+
+
 module.exports = {
     ChatTaken,
     Pendentes,
@@ -131,5 +144,7 @@ module.exports = {
     deletemsg,
     aceitarReadmicao,
     ChangeNomeParticipante,
-    changeChatName
+    changeChatName,
+    editarMensagem,
+    procuraMensagem
 };
