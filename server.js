@@ -443,8 +443,8 @@ io.on('connect', (socket) => {
 
     socket.on('chat message',function(msg,chatAcedido) {
         console.log('message: ' + msg);
-        var mensagem = {msg: msg, id: socket.request.user.username};
         ChatController.getMsgId(db,0,(id)=>{
+            var mensagem = {msg: msg, id: socket.request.user.username, msgId:id};
             let saveMSG = new Msg({
                 username: socket.request.user.username,
                 conteudo: msg,

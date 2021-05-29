@@ -50,8 +50,8 @@ function rejeitarReadmicao(db,req){ //remover o user da base de dados com o nome
         Chat.removeReadmitir(db,req.body.readmitir);
 }
 
-function deletemsg(db,id ){
-    Chat.deletemsg(db, id);
+function deletemsg(db,id, callback){
+    Chat.deletemsg(db, id, callback);
 }
 
 function ChatsDisponiveis(db, socket, callback){

@@ -47,6 +47,7 @@
             <input type="hidden" name="chat" id="groupID">
             <div class="formpart2" id="escolherChat"></div>
             <div class="formpart" id="aceder"></div>
+            <input type="text" name="x" id="inputChat" hidden>
         </form>
     </div>
 </div>
@@ -55,7 +56,9 @@
 
     function updateValue (e) {
         var x = document.getElementById("form");
-        x.setAttribute("action","/chatroom?x="+e.target.value);
+        x.setAttribute("action","/chatroom");
+        x.setAttribute("method","get");
+        document.getElementById("inputChat").setAttribute("value",e.target.value);
         document.getElementById("groupID").setAttribute("value",e.target.value);
     }
 
@@ -73,6 +76,7 @@
                 chatPendente.setAttribute("name","chatsPendentes");
                 chatPendente.setAttribute("value",chats[i].nome);
                 chatPendente.setAttribute("type","radio");
+                chatPendente.setAttribute("required","required");
                 document.getElementById(i).appendChild(chatPendente);
             }
             var chatPendente = document.createElement("input");

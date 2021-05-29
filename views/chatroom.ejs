@@ -40,7 +40,7 @@
         </div>
         <div class="right">
             <form id="aceder" method="get" action="/aceder"><button value="aceder" type="submit" ><i class="material-icons">groups</i></button></form>
-            <form id="sairChat" method="post" action="/sairChat"><button id="buttonSairChat" name="chat" type="submit" ><i class="material-icons">groups_remove</i></button><input id="usernames" name="username" hidden></form>
+            <form id="sairChat" method="post" action="/sairChat"><button id="buttonSairChat" name="chat" type="submit" ><i class="material-icons">group_remove</i></button><input id="usernames" name="username" hidden></form>
             <form id="logout" method="post" action="/logout"><button value="Log out" type="submit"><i class="material-icons">logout</i></button></form>
 
         </div>
@@ -87,9 +87,11 @@
                         return false;
                     });
                     socket.on('chat message', function (msg) {
-                        $('#messages').append('<div class="message sent">' +  ' ' + (msg.id + ": " + msg.msg) + '<form><button id="msgid"><i class="material-icons">delete</i></button></form></div>');
+                        $('#messages').append('<div class="message sent">' +  ' ' + (msg.id + ": " + msg.msg) + '<form action="/chatroom" method="get"><input name="x" id="inputID" hidden="true"><button id="msgid"><i class="material-icons">delete</i></button></form></div>');
                         document.getElementById("msgid").setAttribute("value",msg.msgId);
                         document.getElementById("msgid").setAttribute("id",msg.msgId);
+                        document.getElementById("inputID").setAttribute("value",decodestr());
+                        document.getElementById("inputID").setAttribute("id",msg.msgID+"i");
                         document.getElementById(msg.msgId).addEventListener("click",deletemsg);
                         scrollDown()
                     });
@@ -110,6 +112,12 @@
                                 y.innerText = result[i].username + ": " + result[i].conteudo;
                                 var f=document.createElement('form');
                                 f.setAttribute('id',"f"+result[i].id);
+                                f.setAttribute('method',"get");
+                                f.setAttribute('action',"/chatroom");
+                                var inputs=document.createElement('input');
+                                inputs.setAttribute("value",decodestr());
+                                inputs.setAttribute("name","x");
+                                inputs.setAttribute("hidden","true");
                                 var b=document.createElement('button');
                                 b.setAttribute('value',result[i].id);
                                 b.setAttribute('id',result[i].id);
@@ -119,6 +127,7 @@
                                 document.getElementById('messages').appendChild(y);
                                 document.getElementById("m"+result[i].id).appendChild(f);
                                 document.getElementById("f"+result[i].id).appendChild(b);
+                                document.getElementById("f"+result[i].id).appendChild(inputs);
                                 document.getElementById(result[i].id).appendChild(ix);
                                 document.getElementById(result[i].id).addEventListener("click",deletemsg);
 
@@ -165,9 +174,9 @@
 
     function decodestr() {
         var uri = window.location.href;
-        var uri_dec = decodeURIComponent(uri);
-        var uri_split= uri_dec.split("x=");
-        return uri_split[1];
+        var url = new URL(uri);
+        var x = url.searchParams.get("x");
+        return x;
     }
 
     Element.prototype.remove = function() {

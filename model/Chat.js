@@ -184,7 +184,7 @@ function MensagemPertence(db,id,callback){
     });
 }
 
-function deletemsg(db,id){
+function deletemsg(db,id, callback){
     if (id!==undefined){
         var variavelx=parseInt(id);
         db.collection('mensagens').remove({id:variavelx});
