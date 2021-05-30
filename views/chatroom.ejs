@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Socket.IO chat</title>
+    <title>chatroom</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
@@ -197,7 +197,35 @@
                                 iy.setAttribute('class',"material-icons");
                                 iy.innerHTML='mode';
 
+                                var form3=document.createElement('form');
+                                form3.setAttribute("action","/chatroom");
+                                form3.setAttribute("method","get");
+                                form3.setAttribute("id","3form"+result[i].id);
 
+                                var x3=document.createElement('input');
+                                x3.setAttribute("name","x");
+                                x3.setAttribute("hidden","true");
+                                x3.setAttribute("value",decodestr());
+                                x3.setAttribute("id","C"+result[i].id+"i");
+
+                                var response3=document.createElement('input');
+                                response3.setAttribute("name","response");
+                                response3.setAttribute("value","true");
+                                response3.setAttribute("hidden","true");
+
+                                var responseMensageId3=document.createElement('input');
+                                responseMensageId3.setAttribute("name","responseMessageId");
+                                responseMensageId3.setAttribute("hidden","true");
+                                responseMensageId3.setAttribute("value",result[i].id);
+                                responseMensageId3.setAttribute("id","B"+result[i].id+"i");
+
+                                var msgid3=document.createElement('button');
+                                msgid3.setAttribute("value",result[i].id);
+                                msgid3.setAttribute("id","response msgid"+result[i].id);
+
+                                var iClass=document.createElement('i');
+                                iClass.setAttribute("class","material-icons");
+                                iClass.innerHTML="reply";
                                 document.getElementById('messages').appendChild(y);
 
                                 /*if(result[i].replys!==undefined){
@@ -207,7 +235,15 @@
                                 }*/
 
                                 document.getElementById("m"+result[i].id).appendChild(j)
-
+                                if(result[i].replys!==undefined){
+                                    var rplArr=result[i].replys;
+                                    for(var replys=0;replys<rplArr.length;replys++){
+                                        var repl=document.createElement("div");
+                                        repl.setAttribute("class","response");
+                                        repl.innerHTML="Reply to "+rplArr[replys][1]+": "+rplArr[replys][0];
+                                        document.getElementById("m"+result[i].id).appendChild(repl);
+                                    }
+                                }
                                 document.getElementById("flex"+result[i].id).appendChild(f);
                                 document.getElementById("f"+result[i].id).appendChild(b);
                                 document.getElementById("f"+result[i].id).appendChild(inputs);
@@ -221,6 +257,12 @@
                                 document.getElementById("fb"+result[i].id).appendChild(inputEditMessageId);
                                 document.getElementById("bb"+result[i].id).appendChild(iy);
                                 document.getElementById(result[i].id).addEventListener("click",editmsg);
+                                document.getElementById("flex"+result[i].id).appendChild(form3);
+                                document.getElementById("3form"+result[i].id).appendChild(x3);
+                                document.getElementById("3form"+result[i].id).appendChild(response3);
+                                document.getElementById("3form"+result[i].id).appendChild(responseMensageId3);
+                                document.getElementById("3form"+result[i].id).appendChild(msgid3);
+                                document.getElementById("response msgid"+result[i].id).appendChild(iClass);
 
 
                             }else{
@@ -229,7 +271,15 @@
                                 y.setAttribute('id',"m"+result[i].id);
                                 y.innerText = result[i].username + ": " + result[i].conteudo;
                                 document.getElementById('messages').appendChild(y);
-
+                                if(result[i].replys!==undefined){
+                                    var rplArr=result[i].replys;
+                                    for(var replys=0;replys<rplArr.length;replys++){
+                                        var repl=document.createElement("div");
+                                        repl.setAttribute("class","response");
+                                        repl.innerHTML="Reply to "+rplArr[replys][1]+": "+rplArr[replys][0];
+                                        document.getElementById("m"+result[i].id).appendChild(repl);
+                                    }
+                                }
                                 var a=document.createElement('div');
                                 a.setAttribute('class','flex');
                                 a.setAttribute('id',"flex"+result[i].id);
@@ -262,7 +312,41 @@
                                 spn.setAttribute('id',"spn"+result[i].id);
                                 document.getElementById("flex"+result[i].id).appendChild(spn);
                                 document.getElementById(result[i].id).addEventListener("click",liked);
+                                var form3=document.createElement('form');
+                                form3.setAttribute("action","/chatroom");
+                                form3.setAttribute("method","get");
+                                form3.setAttribute("id","3form"+result[i].id);
 
+                                var x3=document.createElement('input');
+                                x3.setAttribute("name","x");
+                                x3.setAttribute("hidden","true");
+                                x3.setAttribute("value",decodestr());
+                                x3.setAttribute("id","C"+result[i].id+"i");
+                                var response3=document.createElement('input');
+                                response3.setAttribute("name","response");
+                                response3.setAttribute("value","true");
+                                response3.setAttribute("hidden","true");
+
+                                var responseMensageId3=document.createElement('input');
+                                responseMensageId3.setAttribute("name","responseMessageId");
+                                responseMensageId3.setAttribute("hidden","true");
+                                responseMensageId3.setAttribute("value",result[i].id);
+                                responseMensageId3.setAttribute("id","B"+result[i].id+"i");
+
+                                var msgid3=document.createElement('button');
+                                msgid3.setAttribute("value",result[i].id);
+                                msgid3.setAttribute("id","response msgid"+result[i].id);
+
+                                var iClass=document.createElement('i');
+                                iClass.setAttribute("class","material-icons");
+                                iClass.innerHTML="reply";
+
+                                document.getElementById("flex"+result[i].id).appendChild(form3);
+                                document.getElementById("3form"+result[i].id).appendChild(x3);
+                                document.getElementById("3form"+result[i].id).appendChild(response3);
+                                document.getElementById("3form"+result[i].id).appendChild(responseMensageId3);
+                                document.getElementById("3form"+result[i].id).appendChild(msgid3);
+                                document.getElementById("response msgid"+result[i].id).appendChild(iClass);
 
                             }
                             didilikeit(result[i]);
