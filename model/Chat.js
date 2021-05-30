@@ -304,6 +304,23 @@ function liking(db, username, id, callback) {
         });
     }
 }
+function wholiked(db,username,msg,callback){
+    var filters = {};
+    if (msg!== undefined) {
+        filters.id = msg;
+        db.collection("mensagens").find(filters).toArray(function (err, result) {
+            if (result[0].whoLiked === undefined) {
+                callback("false",result[0])
+            }else{
+                if (result[0].whoLiked.includes(username)){
+                    callback("true",result[0])
+                }else{
+                    callback("false",result[0])
+                }
+            }
+        })
+    }
+}
 
 
 
@@ -330,5 +347,6 @@ module.exports = {
     adicionarResposta,
     procuraMensagem,
     Addlike,
-    liking
+    liking,
+    wholiked
 }

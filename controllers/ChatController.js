@@ -125,9 +125,6 @@ function editarMensagem(db, id, newMsg,oldMsg){
     Chat.editarMensagem(db,id,newMsg,oldMsg);
 }
 
-function AdicionarLike(db, id, callback){
-    Chat.Addlike(db, id);
-}
 
 function adicionarResposta(db,msgid,reply,username,callback){
     getMsgId(db,0,(id)=>{
@@ -139,6 +136,9 @@ function like(db, socket, id, callback){
     Chat.liking(db, socket.request.user.username, id, callback);
 }
 
+function wholikedit(db,username,msg,callback){
+    Chat.wholiked(db,username,msg,callback);
+}
 
 module.exports = {
     ChatTaken,
@@ -161,5 +161,6 @@ module.exports = {
     changeChatName,
     editarMensagem,
     procuraMensagem,
-    like
+    like,
+    wholikedit
 };

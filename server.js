@@ -385,6 +385,13 @@ io.on('connect', (socket) => {
     });
 
 
+    socket.on ('didilike',(username,msg)=>{
+        ChatController.wholikedit(db,username ,msg,(s,mensagem)=>{
+            socket.emit("didilike",s,mensagem);
+        })
+    })
+
+
     socket.on('pendentes', (cb) => {
         ChatController.Pendentes(db,socket,function (result){
             cb(result);

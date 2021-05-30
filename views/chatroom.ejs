@@ -253,17 +253,24 @@
                                 document.getElementById("f"+result[i].id).appendChild(inputs);
 
                                 var ix=document.createElement('i');
+                                ix.setAttribute('id',"ix"+result[i].id)
                                 ix.setAttribute('class',"material-icons");
-                                ix.innerHTML='thumb_up';
+                                ix.innerHTML='thumb_up_off_alt';
                                 document.getElementById(result[i].id).appendChild(ix);
+
+                                var spn=document.createElement('span');
+                                spn.setAttribute('id',"spn"+result[i].id);
+                                document.getElementById("flex"+result[i].id).appendChild(spn);
                                 document.getElementById(result[i].id).addEventListener("click",liked);
 
 
                             }
+                            didilikeit(result[i]);
                         }
                         edit();
                         responseMsg();
                         scrollDown();
+
                     });
 
                     socket.on('editar messages', function(msg){
@@ -328,6 +335,8 @@
             usernameSpan.innerText = username;
             document.getElementById("usernames").setAttribute("value",username);
         });
+
+
         socket.emit('looklike', (imagem) => {
             var img=document.createElement('img');
             img.setAttribute('src','/uploads/'+imagem[0].imagem);
@@ -361,6 +370,16 @@
         history.replaceState(null, null, "?"+queryParams.toString());
         location.reload();
     });
+
+    socket.on('didilike',(s,mensagens)=>{
+        var nlikes=mensagens.like;
+        document.getElementById("spn"+mensagens.id).textContent=nlikes;
+        if (s=="true"){
+           document.getElementById("ix"+mensagens.id).innerHTML="thumb_up";
+        }else{
+            document.getElementById("ix"+mensagens.id).innerHTML="thumb_up_off_alt";
+        }
+    })
 
     function editmsg(e){
         socket.emit('editar messages', this.id);
@@ -410,5 +429,13 @@
             }
         }
     }
+
+    function didilikeit(mensagem){
+        var username=usernameSpan.innerText;
+        var msg=mensagem.id;
+        socket.emit('didilike',username,msg)
+
+    }
+
 </script>
 </html>
