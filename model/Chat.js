@@ -280,25 +280,31 @@ function Addlike(db, id, quanto){
     }
 
 }
-function liking(db, username, id, callback){
-    var filters ={};
+function liking(db, username, id, callback) {
+    var filters = {};
     var liked = {};
-    if(id!== undefined){
-        var variavelL=parseInt(id);
+    if (id !== undefined) {
+        var variavelL = parseInt(id);
         filters.id = variavelL;
         liked.whoLiked = username;
-        db.collection("mensagens").find(filters).toArray(function(err,result){
-            if(result[0].whoLiked[0] !== username){
+        db.collection("mensagens").find(filters).toArray(function (err, result) {
+            if (result[0].whoLiked === undefined) {
                 db.collection("mensagens").updateOne(filters, {$push: liked});
-                Addlike(db,id,1);
+                Addlike(db, id, 1);
             }
-            else{
-                db.collection("mensagens").updateOne(filters, {$pull: liked})
-                Addlike(db,id,-1);
+            else {
+                if (result[0].whoLiked.includes(username)) {
+                    db.collection("mensagens").updateOne(filters, {$pull: liked})
+                    Addlike(db, id, -1);
+                } else {
+                    db.collection("mensagens").updateOne(filters, {$push: liked});
+                    Addlike(db, id, 1);
+                }
             }
         });
     }
 }
+
 
 
 module.exports = {

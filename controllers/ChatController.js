@@ -161,6 +161,5 @@ module.exports = {
     changeChatName,
     editarMensagem,
     procuraMensagem,
-    AdicionarLike,
     like
 };
