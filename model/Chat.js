@@ -271,14 +271,33 @@ function editarMensagem(db, id, newMsg, oldMsg){
     db.collection('mensagens').updateOne(filters, {$set: novo})
 }
 
-function Addlike(db, id, callback){
+function Addlike(db, id, quanto){
     var filters = {};
     if(id !== undefined){
         var variavely=parseInt(id);
         filters.id = variavely;
-        db.collection("mensagens").updateOne(filters, {$inc: {like: 1}})
+        db.collection("mensagens").updateOne(filters, {$inc: {like: quanto}})
     }
 
+}
+function liking(db, username, id, callback){
+    var filters ={};
+    var liked = {};
+    if(id!== undefined){
+        var variavelL=parseInt(id);
+        filters.id = variavelL;
+        liked.whoLiked = username;
+        db.collection("mensagens").find(filters).toArray(function(err,result){
+            if(result[0].whoLiked[0] !== username){
+                db.collection("mensagens").updateOne(filters, {$push: liked});
+                Addlike(db,id,1);
+            }
+            else{
+                db.collection("mensagens").updateOne(filters, {$pull: liked})
+                Addlike(db,id,-1);
+            }
+        });
+    }
 }
 
 
@@ -304,5 +323,6 @@ module.exports = {
     editarMensagem,
     adicionarResposta,
     procuraMensagem,
-    Addlike
+    Addlike,
+    liking
 }

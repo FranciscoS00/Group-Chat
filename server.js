@@ -45,7 +45,8 @@ const chatSchema = new mongoose.Schema({
     participante: Array,
     data: Date,
     nome: String,
-    antigos: Array
+    antigos: Array,
+    whoLiked: Array
 });
 
 const msgSchema = new mongoose.Schema({
@@ -435,7 +436,7 @@ io.on('connect', (socket) => {
 
     //------------------------------------------------------------------------------------
     socket.on("liked", function(id){
-        ChatController.AdicionarLike(db, id, function(err, result){
+        ChatController.like(db, socket, id , function(err, result){
             if (err) return console.error(err);
         });
     })
@@ -478,7 +479,8 @@ io.on('connect', (socket) => {
                     id: id,
                     data: Date.now(),
                     pertence: chatAcedido,
-                    like: 0
+                    like: 0,
+                    wholiked: []
                 })
                 saveMSG.save(function (err, instance) {
                     if (err) return console.error(err);
