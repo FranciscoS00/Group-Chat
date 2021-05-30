@@ -124,12 +124,14 @@ function colocarNoChatReadmitir(db,pessoas){
 }
 
 function removeReadmitir(db,pessoas){
-    if(pessoas!==undefined) {
-        var newStuff=pessoas.split(",");
-        var username=newStuff[1].split("]");
-        var chat=newStuff[0].split("[");
-        db.collection('readmitir').remove({username:username[0],nome:chat[1]});
-    }
+    var filters = { };
+
+    if(chatname !== undefined) filters.nome = chatname;
+    db.collection('chats').find(filters).toArray(function(err,result){
+        callback(result);
+    });
+
+
 }
 
 function ChangeUsernameParticipante(db, username, newUsername, callback){
@@ -230,7 +232,28 @@ function mudarNomeChat(db, antigo, novo, callback){
 }
 
 
+function adicionarResposta(db, msgid,id,reply,username,callback){
+    var filters = { };
+    var replyArray = [];
+    var Id=parseInt(msgid);
 
+    if(Id !== undefined) filters.id = Id;
+    db.collection('mensagens').find(filters).toArray(function(err,result){
+        if(result[0].replys!==undefined) {
+            for (var i = 0; i < result[0].replys.length; i++) {
+                replyArray[i] = result[0].replys[i];
+            }
+            replyArray[result[0].replys.length] = [result[0].conteudo, result[0].username];
+        }
+        else{
+            replyArray[0] = [result[0].conteudo , result[0].username];
+        }
+        db.collection('mensagens').insertOne({username: username, conteudo:reply, id:id, data:new Date, pertence:result[0].pertence, replys:replyArray},(error,result)=>{
+            callback(error);
+        });
+    });
+
+}
 
 //-----------------------------------------------------------
 
@@ -248,11 +271,12 @@ function editarMensagem(db, id, newMsg, oldMsg){
     db.collection('mensagens').updateOne(filters, {$set: novo})
 }
 
-function Addlike(db, id){
+function Addlike(db, id, callback){
     var filters = {};
     if(id !== undefined){
-        filters.id = id
-        db.collection("mensagens").update(filters, {$inc: {like: 1}})
+        var variavely=parseInt(id);
+        filters.id = variavely;
+        db.collection("mensagens").updateOne(filters, {$inc: {like: 1}})
     }
 
 }
@@ -278,6 +302,7 @@ module.exports = {
     ChangeUsernameParticipante,
     mudarNomeChat,
     editarMensagem,
+    adicionarResposta,
     procuraMensagem,
     Addlike
 }

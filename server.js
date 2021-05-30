@@ -426,8 +426,18 @@ io.on('connect', (socket) => {
     });
 
     //------------------------------------------------------------------------------------
+
+    socket.on('reply messages', (msgid,reply,username)=>{
+        ChatController.adicionarResposta(db,msgid,reply,username,()=>{
+            io.emit('reply messages');
+        })
+    });
+
+    //------------------------------------------------------------------------------------
     socket.on("liked", function(id){
-        ChatController.AdicionarLike(db, id);
+        ChatController.AdicionarLike(db, id, function(err, result){
+            if (err) return console.error(err);
+        });
     })
 
 
@@ -457,8 +467,8 @@ io.on('connect', (socket) => {
         });
     });
 
-    socket.on('chat message',function(msg,chatAcedido,edit) {
-        if(edit!="true"){
+    socket.on('chat message',function(msg,chatAcedido,edit,response) {
+        if(edit!="true" && response!="true"){
             console.log('message: ' + msg);
             ChatController.getMsgId(db,0,(id)=>{
                 var mensagem = {msg: msg, id: socket.request.user.username, msgId:id};

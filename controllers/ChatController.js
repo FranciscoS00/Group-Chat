@@ -125,10 +125,16 @@ function editarMensagem(db, id, newMsg,oldMsg){
     Chat.editarMensagem(db,id,newMsg,oldMsg);
 }
 
-function AdicionarLike(db, id){
-    Chat.Addlike(db, id);
+function AdicionarLike(db, id, callback){
+    Chat.Addlike(db, id, callback);
 }
 
+function adicionarResposta(db,msgid,reply,username,callback){
+    getMsgId(db,0,(id)=>{
+        Chat.adicionarResposta(db, msgid,id,reply,username,callback);
+    });
+
+}
 
 
 module.exports = {
@@ -140,6 +146,7 @@ module.exports = {
     getMsgId,
     imagemConversa,
     MensagensChat,
+    adicionarResposta,
     sairChat,
     pedidosReadmicao,
     pedidosReadmicaoCriador,

@@ -82,16 +82,21 @@
                     socket.emit("mensagens guardadas",decodestr());
 
                     $('#message').submit(function () {
-                        socket.emit('chat message', $('#m').val(),decodestr(),Edit());
+                        socket.emit('chat message', $('#m').val(),decodestr(),Edit(),Resp());
                         console.log($('#m').val());
                         $('#m').val('');
                         return false;
                     });
 
                     socket.on('chat message', function (msg) {
-                        $('#messages').append('<div class="message sent">' +  ' ' + (msg.id + ": " + msg.msg) +
+                        $('#messages').append('<div class="message sent" id="msgSent">' +  ' ' + (msg.id + ": " + msg.msg) +
                             '<div class="flex"> <form action="/chatroom" method="get"><input name="x" id="inputID" hidden="true"><button id="msgid"><i class="material-icons">delete</i></button></form>' +
-                            '<form action="/chatroom" method="get"><input name="x" id="inputID2" hidden="true"><input name="edit" value="true" hidden="true"><input name="editMessageId" id="temp" hidden="true"><button id="msgid2"><i class="material-icons">mode</i></button></form></div></div>');
+                            '<form action="/chatroom" method="get"><input name="x" id="inputID2" hidden="true"><input name="edit" value="true" hidden="true"><input name="editMessageId" id="temp" hidden="true"><button id="msgid2"><i class="material-icons">mode</i></button></form>' +
+                            '<form action="/chatroom" method="get"><input name="x" id="inputID3" hidden="true"><input name="response" value="true" hidden="true"><input name="responseMessageId" id="temporario" hidden="true"><button id="msgid3"><i class="material-icons">reply</i></button></form>' +
+                            '<button id="pin"><i class="material-icons">mode</i></button></div></div>');
+
+                        document.getElementById("msgSent").setAttribute("id","msgSent"+msg.msgId);
+
                         document.getElementById("msgid").setAttribute("value",msg.msgId);
                         document.getElementById("msgid").setAttribute("id",msg.msgId);
 
@@ -106,6 +111,21 @@
 
                         document.getElementById("inputID2").setAttribute("value",decodestr());
                         document.getElementById("inputID2").setAttribute("id","B"+msg.msgId+"i");
+
+                        document.getElementById("temporario").setAttribute("value",msg.msgId);
+                        document.getElementById("temporario").setAttribute("id","B"+msg.msgId+"i");
+
+                        document.getElementById("inputID3").setAttribute("value",decodestr());
+                        document.getElementById("inputID3").setAttribute("id","C"+msg.msgId+"i");
+
+                        document.getElementById("msgid3").setAttribute("value",msg.msgId);
+                        document.getElementById("msgid3").setAttribute("id","response msgid"+msg.msgId);
+
+                        document.getElementById("pin").setAttribute("value","msgSent"+msg.msgId);
+                        document.getElementById("pin").setAttribute("id","pin"+msg.msgId);
+                        document.getElementById("pin"+msg.msgId).onclick=function(e){
+                            document.getElementById(this.value).setAttribute("class","message sent flow");
+                        };
 
                         document.getElementById(msg.msgId).addEventListener("click",deletemsg);
                         scrollDown()
@@ -180,7 +200,14 @@
 
                                 document.getElementById('messages').appendChild(y);
 
+                                /*if(result[i].replys!==undefined){
+                                    for(var replys=0;replys<result[i].replys.length;i++){
+
+                                    }
+                                }*/
+
                                 document.getElementById("m"+result[i].id).appendChild(j)
+
                                 document.getElementById("flex"+result[i].id).appendChild(f);
                                 document.getElementById("f"+result[i].id).appendChild(b);
                                 document.getElementById("f"+result[i].id).appendChild(inputs);
@@ -229,14 +256,13 @@
                                 ix.setAttribute('class',"material-icons");
                                 ix.innerHTML='thumb_up';
                                 document.getElementById(result[i].id).appendChild(ix);
-
                                 document.getElementById(result[i].id).addEventListener("click",liked);
 
 
-                               /* document.getElementById(result[i].id).addEventListener("click",deletemsg);*/
                             }
                         }
                         edit();
+                        responseMsg();
                         scrollDown();
                     });
 
@@ -328,6 +354,14 @@
         location.reload();
     });
 
+    socket.on('reply messages', ()=>{
+
+        var queryParams = new URLSearchParams(window.location.search);
+        queryParams.set("response", "false");
+        history.replaceState(null, null, "?"+queryParams.toString());
+        location.reload();
+    });
+
     function editmsg(e){
         socket.emit('editar messages', this.id);
     }
@@ -353,6 +387,28 @@
         var uri = window.location.href;
         var url = new URL(uri);
         return url.searchParams.get("edit");
+    }
+
+    function Resp(){
+        var uri = window.location.href;
+        var url = new URL(uri);
+        return url.searchParams.get("response");
+    }
+
+    function responseMsg(){
+        var uri = window.location.href;
+        var url = new URL(uri);
+        var response = url.searchParams.get("response");
+        if(response=="true"){
+            document.getElementById("message").setAttribute("id","replyMsg");
+            var button=document.getElementById("sendB");
+            button.onclick=function(e){
+                var reply=document.getElementById("m").value;
+                var msgid = url.searchParams.get("responseMessageId");
+                var username=usernameSpan.innerText;
+                socket.emit('reply messages', msgid,reply,username);
+            }
+        }
     }
 </script>
 </html>
