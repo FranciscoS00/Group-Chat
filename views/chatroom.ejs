@@ -195,11 +195,45 @@
                                 document.getElementById("bb"+result[i].id).appendChild(iy);
                                 document.getElementById(result[i].id).addEventListener("click",editmsg);
 
+
                             }else{
                                 var y=document.createElement('div');
                                 y.setAttribute('class','message received');
+                                y.setAttribute('id',"m"+result[i].id);
                                 y.innerText = result[i].username + ": " + result[i].conteudo;
                                 document.getElementById('messages').appendChild(y);
+
+                                var a=document.createElement('div');
+                                a.setAttribute('class','flex');
+                                a.setAttribute('id',"flex"+result[i].id);
+                                document.getElementById("m"+result[i].id).appendChild(a);
+
+                                var f=document.createElement('form');
+                                f.setAttribute('id',"f"+result[i].id);
+                                f.setAttribute('method',"get");
+                                f.setAttribute('action',"/chatroom");
+                                document.getElementById("flex"+result[i].id).appendChild(f);
+
+                                var b=document.createElement('button');
+                                b.setAttribute('value',result[i].id);
+                                b.setAttribute('id',result[i].id);
+                                document.getElementById("f"+result[i].id).appendChild(b);
+
+                                var inputs=document.createElement('input');
+                                inputs.setAttribute("value",decodestr());
+                                inputs.setAttribute("name","x");
+                                inputs.setAttribute("hidden","true");
+                                document.getElementById("f"+result[i].id).appendChild(inputs);
+
+                                var ix=document.createElement('i');
+                                ix.setAttribute('class',"material-icons");
+                                ix.innerHTML='thumb_up';
+                                document.getElementById(result[i].id).appendChild(ix);
+
+                                document.getElementById(result[i].id).addEventListener("click",liked);
+
+
+                               /* document.getElementById(result[i].id).addEventListener("click",deletemsg);*/
                             }
                         }
                         edit();
@@ -301,7 +335,7 @@
         socket.emit('deleted messages', this.id);
     }
     function liked(e){
-        socket.emit('like', this.id);
+        socket.emit('liked', this.id);
     }
 
 
