@@ -594,6 +594,7 @@
 
 
 
+
     .message.received button {
         margin-left: 7px;
         background-color: #ffffff;
@@ -602,9 +603,14 @@
     }
 
     .message.received i{
+        opacity: 0.5;
         font-size: 18px;
         background-color: #ffffff;
         color: #1d86db;
+    }
+    .message.received:hover i{
+        opacity: 1;
+
     }
 
     .message.received .flex{
@@ -621,7 +627,7 @@
     .message.sent {
         display: block;
         margin-right: 10px;
-        background: #B3B3B3 ; /* 4EE2EC*/
+        background: rgb(186, 235, 252); /* 4EE2EC*/
         border-radius: 5px 0px 5px 5px;
         float: right;
 
@@ -631,20 +637,16 @@
         float: right;
     }
 
-    .message.sent.flow{
-        position: sticky;
-        top:88px;
-    }
 
 
     .message.sent:after {
         border-width: 0px 0 10px 10px;
-        border-color: transparent #B3B3B3;/* 4EE2EC*/
+        border-color: transparent rgb(186, 235, 252);/* 4EE2EC*/
         top: 0;
         right: -10px;
     }
     .message.sent button{
-        background-color: #B3B3B3;
+        background-color: rgb(186, 235, 252);
         border-style: hidden;
         padding: 1px 1px 1px 1px;
 
@@ -653,13 +655,19 @@
     .message.sent i{
         opacity: 0;
         font-size: 18px;
-        background-color: #B3B3B3;
-        color: #c95959;
+        background-color: rgb(186, 235, 252);
+        color: #ce4646;
     }
 
     .message.sent:hover i{
         opacity: 1;
 
+    }
+
+    .message .response{
+        color: #808080;
+        line-height: 10px;
+        font-size: 9px;
     }
 
     .editpag{
