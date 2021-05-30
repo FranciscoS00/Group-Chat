@@ -53,7 +53,8 @@ const msgSchema = new mongoose.Schema({
     conteudo: String,
     data: Date,
     id: Number,
-    pertence: String
+    pertence: String,
+    like: Number
 });
 
 const pendSchema = new mongoose.Schema({
@@ -424,7 +425,10 @@ io.on('connect', (socket) => {
         });
     });
 
-
+    //------------------------------------------------------------------------------------
+    socket.on("liked", function(id){
+        ChatController.AdicionarLike(db, id);
+    })
 
 
     const session = socket.request.session;
@@ -463,7 +467,8 @@ io.on('connect', (socket) => {
                     conteudo: msg,
                     id: id,
                     data: Date.now(),
-                    pertence: chatAcedido
+                    pertence: chatAcedido,
+                    like: 0
                 })
                 saveMSG.save(function (err, instance) {
                     if (err) return console.error(err);

@@ -125,6 +125,10 @@ function editarMensagem(db, id, newMsg,oldMsg){
     Chat.editarMensagem(db,id,newMsg,oldMsg);
 }
 
+function AdicionarLike(db, id){
+    Chat.Addlike(db, id);
+}
+
 
 
 module.exports = {
@@ -146,5 +150,6 @@ module.exports = {
     ChangeNomeParticipante,
     changeChatName,
     editarMensagem,
-    procuraMensagem
+    procuraMensagem,
+    AdicionarLike
 };

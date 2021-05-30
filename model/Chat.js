@@ -248,6 +248,15 @@ function editarMensagem(db, id, newMsg, oldMsg){
     db.collection('mensagens').updateOne(filters, {$set: novo})
 }
 
+function Addlike(db, id){
+    var filters = {};
+    if(id !== undefined){
+        filters.id = id
+        db.collection("mensagens").update(filters, {$inc: {like: 1}})
+    }
+
+}
+
 
 module.exports = {
     getChat,
@@ -269,5 +278,6 @@ module.exports = {
     ChangeUsernameParticipante,
     mudarNomeChat,
     editarMensagem,
-    procuraMensagem
+    procuraMensagem,
+    Addlike
 }

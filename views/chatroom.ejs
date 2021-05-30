@@ -300,6 +300,10 @@
     function deletemsg(e){
         socket.emit('deleted messages', this.id);
     }
+    function liked(e){
+        socket.emit('like', this.id);
+    }
+
 
     function edit(){
         var uri = window.location.href;
